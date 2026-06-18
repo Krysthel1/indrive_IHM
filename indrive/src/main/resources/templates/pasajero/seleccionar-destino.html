@@ -1,0 +1,85 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Seleccionar Destino - inDrive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #FF6600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="text"] {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: #FF6600;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #CC5200;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>¿A dónde quieres ir?</h1>
+        <form action="/viaje/guardar" method="post" th:object="${viaje}">
+            <div class="form-group">
+                <label for="origen">Origen:</label>
+                <input type="text" id="origen" name="origen" th:field="*{origen}" placeholder="Tu ubicación actual" required>
+            </div>
+            
+            <div class="form-group">
+                <label for="destino">Destino:</label>
+                <input type="text" id="destino" name="destino" th:field="*{destino}" placeholder="¿A dónde vas?" required>
+            </div>
+            
+            <button type="submit" class="btn">Continuar</button>
+        </form>
+    </div>
+</body>
+</html>

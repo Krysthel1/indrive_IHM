@@ -1,0 +1,207 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>inDrive - Tu Viaje, Tu Precio</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            overflow-x: hidden;
+        }
+        .container {
+            text-align: center;
+            color: white;
+            padding: 2rem;
+            max-width: 800px;
+            animation: fadeIn 1s ease-in;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .logo {
+            font-size: 4rem;
+            font-weight: 700;
+            margin-bottom: 0.5rem;
+            text-shadow: 2px 2px 4px rgba(0,0,0,0.2);
+        }
+        .tagline {
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+            font-weight: 300;
+        }
+        .description {
+            font-size: 1.1rem;
+            margin-bottom: 3rem;
+            opacity: 0.9;
+            line-height: 1.6;
+        }
+        .features {
+            display: flex;
+            justify-content: center;
+            gap: 2rem;
+            margin-bottom: 3rem;
+            flex-wrap: wrap;
+        }
+        .feature {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            padding: 1.5rem;
+            border-radius: 15px;
+            min-width: 150px;
+            transition: transform 0.3s, background 0.3s;
+        }
+        .feature:hover {
+            transform: translateY(-5px);
+            background: rgba(255,255,255,0.2);
+        }
+        .feature i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .feature p {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+        .btn-group {
+            display: flex;
+            justify-content: center;
+            gap: 1rem;
+            flex-wrap: wrap;
+        }
+        .btn {
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+            padding: 1rem 2.5rem;
+            text-decoration: none;
+            border-radius: 50px;
+            font-weight: 600;
+            font-size: 1rem;
+            transition: all 0.3s ease;
+            cursor: pointer;
+            border: none;
+        }
+        .btn:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 10px 20px rgba(0,0,0,0.2);
+        }
+        .btn-primary {
+            background: linear-gradient(135deg, #fff 0%, #f0f0f0 100%);
+            color: #667eea;
+        }
+        .btn-secondary {
+            background: transparent;
+            color: #fff;
+            border: 2px solid #fff;
+        }
+        .btn-secondary:hover {
+            background: rgba(255,255,255,0.2);
+        }
+        .floating-shapes {
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            pointer-events: none;
+            overflow: hidden;
+            z-index: -1;
+        }
+        .shape {
+            position: absolute;
+            background: rgba(255,255,255,0.1);
+            border-radius: 50%;
+            animation: float 15s infinite;
+        }
+        .shape:nth-child(1) {
+            width: 80px;
+            height: 80px;
+            top: 10%;
+            left: 10%;
+            animation-delay: 0s;
+        }
+        .shape:nth-child(2) {
+            width: 120px;
+            height: 120px;
+            top: 70%;
+            left: 80%;
+            animation-delay: 2s;
+        }
+        .shape:nth-child(3) {
+            width: 60px;
+            height: 60px;
+            top: 40%;
+            left: 70%;
+            animation-delay: 4s;
+        }
+        @keyframes float {
+            0%, 100% { transform: translateY(0) rotate(0deg); }
+            50% { transform: translateY(-20px) rotate(180deg); }
+        }
+        @media (max-width: 768px) {
+            .logo { font-size: 3rem; }
+            .tagline { font-size: 1.2rem; }
+            .features { gap: 1rem; }
+            .feature { min-width: 120px; padding: 1rem; }
+            .btn { padding: 0.8rem 2rem; font-size: 0.9rem; }
+        }
+    </style>
+</head>
+<body>
+    <div class="floating-shapes">
+        <div class="shape"></div>
+        <div class="shape"></div>
+        <div class="shape"></div>
+    </div>
+    
+    <div class="container">
+        <div class="logo">inDrive</div>
+        <p class="tagline">Tu Viaje, Tu Precio</p>
+        <p class="description">La plataforma de transporte compartido donde tú decides cuánto pagar. Conecta con conductores cercanos y negocia el precio que se ajuste a tu presupuesto.</p>
+        
+        <div class="features">
+            <div class="feature">
+                <i class="fas fa-hand-holding-usd"></i>
+                <p>Precio Flexible</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-car"></i>
+                <p>Conductores Cercanos</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-shield-alt"></i>
+                <p>Seguro</p>
+            </div>
+            <div class="feature">
+                <i class="fas fa-clock"></i>
+                <p>Rápido</p>
+            </div>
+        </div>
+        
+        <div class="btn-group">
+            <a href="/auth/login" class="btn btn-primary">
+                <i class="fas fa-sign-in-alt"></i>
+                Iniciar Sesión
+            </a>
+            <a href="/auth/registro" class="btn btn-secondary">
+                <i class="fas fa-user-plus"></i>
+                Registrarse
+            </a>
+        </div>
+    </div>
+</body>
+</html>

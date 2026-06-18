@@ -1,0 +1,276 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Conductor - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            min-height: 100vh;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .btn-logout {
+            padding: 0.6rem 1.5rem;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            border: none;
+            border-radius: 25px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.3s ease;
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.5rem;
+        }
+        .btn-logout:hover {
+            transform: translateY(-2px);
+            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
+        }
+        .container {
+            max-width: 1200px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .welcome-section {
+            background: white;
+            border-radius: 20px;
+            padding: 3rem;
+            text-align: center;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease-out;
+            margin-bottom: 2rem;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .welcome-section h1 {
+            font-size: 2.5rem;
+            color: #333;
+            margin-bottom: 0.5rem;
+        }
+        .welcome-section p {
+            color: #666;
+            font-size: 1.1rem;
+            margin-bottom: 1rem;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.5rem 1.5rem;
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            color: white;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(10px);
+            border-radius: 15px;
+            padding: 1.5rem;
+            text-align: center;
+            color: white;
+        }
+        .stat-card i {
+            font-size: 2rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .number {
+            font-size: 2rem;
+            font-weight: 700;
+        }
+        .stat-card .label {
+            font-size: 0.9rem;
+            opacity: 0.9;
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+        }
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .action-card i {
+            font-size: 2.5rem;
+            margin-bottom: 1rem;
+        }
+        .action-card.solicitudes i {
+            color: #FF6600;
+        }
+        .action-card.historial i {
+            color: #4CAF50;
+        }
+        .action-card.ganancias i {
+            color: #2196F3;
+        }
+        .action-card.viaje i {
+            color: #9C27B0;
+        }
+        .action-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.2rem;
+        }
+        .action-card p {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 1rem;
+        }
+        .btn-action {
+            display: inline-block;
+            padding: 0.6rem 1.5rem;
+            border-radius: 25px;
+            font-weight: 600;
+            font-size: 0.9rem;
+            transition: all 0.3s ease;
+        }
+        .btn-action:hover {
+            transform: scale(1.05);
+        }
+        .btn-solicitudes {
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            color: white;
+        }
+        .btn-historial {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+        .btn-ganancias {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+        }
+        .btn-viaje {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+            color: white;
+        }
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+            }
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            .welcome-section {
+                padding: 2rem;
+            }
+            .welcome-section h1 {
+                font-size: 2rem;
+            }
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <span class="navbar-brand">inDrive Conductor</span>
+        <a href="/auth/login" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>¡Hola, Conductor!</h1>
+            <p>Estado actual: <span class="status-badge">Disponible</span></p>
+            <p>Gana dinero conduciendo cuando quieras</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-car"></i>
+                <div class="number">0</div>
+                <div class="label">Viajes Hoy</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-dollar-sign"></i>
+                <div class="number">$0</div>
+                <div class="label">Ganancias Hoy</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-star"></i>
+                <div class="number">0</div>
+                <div class="label">Calificación</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <div class="number">0</div>
+                <div class="label">Horas Online</div>
+            </div>
+        </div>
+
+        <div class="action-grid">
+            <a href="/conductor/solicitudes" class="action-card solicitudes">
+                <i class="fas fa-bell"></i>
+                <h3>Solicitudes</h3>
+                <p>Ver viajes disponibles cerca de ti</p>
+                <span class="btn-action btn-solicitudes">Ver Solicitudes</span>
+            </a>
+            <a href="/conductor/viaje" class="action-card viaje">
+                <i class="fas fa-route"></i>
+                <h3>Viaje Actual</h3>
+                <p>Ver tu viaje en curso</p>
+                <span class="btn-action btn-viaje">Ver Viaje</span>
+            </a>
+            <a href="/conductor/historial" class="action-card historial">
+                <i class="fas fa-history"></i>
+                <h3>Historial</h3>
+                <p>Consultar tus viajes realizados</p>
+                <span class="btn-action btn-historial">Ver Historial</span>
+            </a>
+            <a href="/conductor/ganancias" class="action-card ganancias">
+                <i class="fas fa-wallet"></i>
+                <h3>Ganancias</h3>
+                <p>Consultar tus ingresos totales</p>
+                <span class="btn-action btn-ganancias">Ver Ganancias</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
