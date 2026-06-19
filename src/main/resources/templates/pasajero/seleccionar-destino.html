@@ -2,84 +2,167 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Seleccionar Destino - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
-            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
-            min-height: 100vh;
-            display: flex;
-            justify-content: center;
-            align-items: center;
-        }
-        .container {
-            background: white;
-            padding: 2rem;
-            border-radius: 10px;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+        .map-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
             width: 100%;
-            max-width: 500px;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+            z-index: 0;
+            opacity: 0.5;
         }
-        h1 {
-            color: #FF6600;
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(18,18,18,0.2) 0%, rgba(18,18,18,0.8) 50%, rgba(18,18,18,1) 100%);
+            z-index: 1;
+        }
+
+        .app-bar {
+            background: transparent;
+            border-bottom: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-surface);
+            border-radius: 30px 30px 0 0;
+            padding: 2rem 1.5rem;
+            z-index: 2;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            animation: slideUpSheet 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+        }
+
+        @keyframes slideUpSheet {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .location-input-group {
+            position: relative;
             margin-bottom: 1.5rem;
-            text-align: center;
         }
-        .form-group {
+
+        .location-line {
+            position: absolute;
+            left: 23px;
+            top: 30px;
+            bottom: 30px;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+            z-index: 1;
+        }
+
+        .input-wrapper.origin i { color: var(--info); }
+        .input-wrapper.destination i { color: var(--primary); }
+
+        .saved-places {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
             margin-bottom: 1rem;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
         }
-        label {
-            display: block;
-            margin-bottom: 0.5rem;
-            color: #333;
-            font-weight: bold;
+        
+        .saved-places::-webkit-scrollbar {
+            display: none;
         }
-        input[type="text"] {
-            width: 100%;
-            padding: 0.75rem;
-            border: 1px solid #ddd;
-            border-radius: 5px;
-            font-size: 1rem;
+
+        .place-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            color: var(--text-muted);
         }
-        .btn {
-            width: 100%;
-            padding: 1rem;
-            background-color: #FF6600;
-            color: white;
-            border: none;
-            border-radius: 5px;
-            font-size: 1rem;
-            font-weight: bold;
-            cursor: pointer;
-            transition: background-color 0.3s;
-        }
-        .btn:hover {
-            background-color: #CC5200;
+
+        .place-chip i {
+            color: var(--text-main);
         }
     </style>
 </head>
 <body>
-    <div class="container">
-        <h1>¿A dónde quieres ir?</h1>
-        <form action="/viaje/guardar" method="post" th:object="${viaje}">
-            <div class="form-group">
-                <label for="origen">Origen:</label>
-                <input type="text" id="origen" name="origen" th:field="*{origen}" placeholder="Tu ubicación actual" required>
+    <div class="app-container" style="padding-bottom: 0;">
+        <div class="map-bg" style="opacity: 0.8; z-index: 0; overflow: hidden;">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-overlay"></div>
+
+        <!-- App Bar -->
+        <div class="app-bar">
+            <a href="/pasajero/dashboard" class="app-bar-btn" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 10;">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Bottom Sheet -->
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <h2 class="mb-3">¿A dónde quieres ir?</h2>
+
+            <div class="saved-places">
+                <div class="place-chip" style="cursor: pointer;" onclick="document.getElementById('destino').value='Open Plaza Piura'"><i class="fas fa-home"></i> Open Plaza</div>
+                <div class="place-chip" style="cursor: pointer;" onclick="document.getElementById('destino').value='Plaza de Armas Piura'"><i class="fas fa-star"></i> Plaza Armas</div>
+                <div class="place-chip" style="cursor: pointer;" onclick="document.getElementById('destino').value='Real Plaza Piura'"><i class="fas fa-briefcase"></i> Real Plaza</div>
             </div>
-            
-            <div class="form-group">
-                <label for="destino">Destino:</label>
-                <input type="text" id="destino" name="destino" th:field="*{destino}" placeholder="¿A dónde vas?" required>
-            </div>
-            
-            <button type="submit" class="btn">Continuar</button>
-        </form>
+
+            <form action="/pasajero/precio" method="get">
+                <div class="location-input-group">
+                    <div class="location-line"></div>
+                    <div class="input-group mb-2">
+                        <div class="input-wrapper origin">
+                            <i class="fas fa-dot-circle"></i>
+                            <input type="text" id="origen" name="origen" placeholder="Ubicación actual" value="Universidad Nacional de Piura" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group mb-0">
+                        <div class="input-wrapper destination">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="destino" name="destino" placeholder="Buscar destino" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary mt-4">
+                    <i class="fas fa-arrow-right"></i> Siguiente
+                </button>
+            </form>
+        </div>
     </div>
 </body>
 </html>

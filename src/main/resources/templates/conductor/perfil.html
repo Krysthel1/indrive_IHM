@@ -1,0 +1,347 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Perfil de Conductor - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .profile-header {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            padding: 1.5rem 1rem;
+            text-align: center;
+            border-bottom: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+            animation: slideUpFade 0.5s ease-out;
+        }
+
+        .profile-avatar {
+            width: 80px;
+            height: 80px;
+            border-radius: 50%;
+            background: var(--primary-gradient);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 2.2rem;
+            font-weight: 700;
+            color: white;
+            box-shadow: 0 8px 20px rgba(230, 81, 0, 0.3);
+            margin-bottom: 0.8rem;
+        }
+
+        .profile-name {
+            font-size: 1.3rem;
+            font-weight: 700;
+            margin-bottom: 4px;
+        }
+
+        .profile-role-badge {
+            background: rgba(230, 81, 0, 0.15);
+            color: var(--primary);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 0.8rem;
+        }
+
+        .rating-summary-card {
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 10px 20px;
+            display: flex;
+            align-items: center;
+            gap: 15px;
+            margin-top: 5px;
+        }
+
+        .rating-summary-score {
+            font-size: 1.8rem;
+            font-weight: 700;
+            color: var(--warning);
+        }
+
+        .rating-summary-details {
+            display: flex;
+            flex-direction: column;
+            text-align: left;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 600;
+            color: var(--text-muted);
+            margin: 1.5rem 0 0.8rem 0;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            text-transform: uppercase;
+            letter-spacing: 0.5px;
+        }
+
+        .profile-details-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .profile-detail-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 0.8rem 1.2rem;
+            display: flex;
+            align-items: center;
+            gap: 16px;
+        }
+
+        .profile-detail-card i {
+            font-size: 1.15rem;
+            color: var(--primary);
+            width: 24px;
+            text-align: center;
+        }
+
+        .detail-info {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .detail-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .detail-value {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .vehicle-card {
+            background: linear-gradient(135deg, rgba(230, 81, 0, 0.05) 0%, rgba(255, 255, 255, 0.02) 100%);
+            border: 1px solid rgba(230, 81, 0, 0.15);
+            border-radius: 16px;
+            padding: 1.2rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .vehicle-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-top: 8px;
+        }
+
+        .vehicle-item {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .vehicle-label {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+        }
+
+        .vehicle-value {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .reviews-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-bottom: 2rem;
+        }
+
+        .review-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            padding: 1rem;
+        }
+
+        .review-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 8px;
+        }
+
+        .reviewer-name {
+            font-size: 0.85rem;
+            font-weight: 600;
+        }
+
+        .review-stars {
+            color: var(--warning);
+            font-size: 0.8rem;
+        }
+
+        .review-comment {
+            font-size: 0.8rem;
+            color: var(--text-main);
+            line-height: 1.4;
+            font-style: italic;
+        }
+
+        .review-date {
+            font-size: 0.7rem;
+            color: var(--text-muted);
+            margin-top: 6px;
+            text-align: right;
+        }
+
+        .logout-btn-wrapper {
+            margin-bottom: 5rem;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <h1 class="app-bar-title">Mi Perfil</h1>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content">
+            <div class="profile-header">
+                <div class="profile-avatar" th:text="${#strings.substring(usuarioLogueado.nombres,0,1)}">C</div>
+                <div class="profile-name" th:text="${usuarioLogueado.nombres + ' ' + usuarioLogueado.apellidos}">Nombre Conductor</div>
+                <span class="profile-role-badge">Conductor</span>
+                
+                <div class="rating-summary-card">
+                    <span class="rating-summary-score" th:text="${promedioCalificaciones}">4.8</span>
+                    <div class="rating-summary-details">
+                        <div class="review-stars">
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                            <i class="fas fa-star"></i>
+                        </div>
+                        <span style="font-size:0.75rem; color:var(--text-muted);" th:text="${totalCalificaciones + ' calificaciones'}">12 calificaciones</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos de Cuenta -->
+            <div class="section-title">
+                <i class="fas fa-user-circle"></i> Datos de Cuenta
+            </div>
+            <div class="profile-details-list">
+                <div class="profile-detail-card">
+                    <i class="fas fa-envelope"></i>
+                    <div class="detail-info">
+                        <span class="detail-label">Correo Electrónico</span>
+                        <span class="detail-value" th:text="${usuarioLogueado.correo}">conductor@indrive.com</span>
+                    </div>
+                </div>
+
+                <div class="profile-detail-card">
+                    <i class="fas fa-phone"></i>
+                    <div class="detail-info">
+                        <span class="detail-label">Número de Teléfono</span>
+                        <span class="detail-value" th:text="${usuarioLogueado.telefono}">+51 987654321</span>
+                    </div>
+                </div>
+
+                <div class="profile-detail-card">
+                    <i class="fas fa-id-card"></i>
+                    <div class="detail-info">
+                        <span class="detail-label">Licencia de Conducir</span>
+                        <span class="detail-value" th:text="${conductor.licencia}">A-I 789456</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Datos del Vehículo -->
+            <div class="section-title">
+                <i class="fas fa-car"></i> Información del Vehículo
+            </div>
+            <div class="vehicle-card" th:if="${vehiculo != null}">
+                <div style="display: flex; align-items: center; gap: 10px; margin-bottom: 10px;">
+                    <i class="fas fa-car-side" style="color: var(--primary); font-size: 1.2rem;"></i>
+                    <span class="detail-value" th:text="${vehiculo.marca + ' ' + vehiculo.modelo}">Kia Rio</span>
+                </div>
+                <div class="vehicle-grid">
+                    <div class="vehicle-item">
+                        <span class="vehicle-label">Placa</span>
+                        <span class="vehicle-value" th:text="${vehiculo.placa}">P8A-345</span>
+                    </div>
+                    <div class="vehicle-item">
+                        <span class="vehicle-label">Color</span>
+                        <span class="vehicle-value" th:text="${vehiculo.color}">Negro Metálico</span>
+                    </div>
+                </div>
+            </div>
+            <div class="profile-detail-card" th:if="${vehiculo == null}">
+                <i class="fas fa-exclamation-triangle" style="color: var(--warning);"></i>
+                <div class="detail-info">
+                    <span class="detail-label">Vehículo</span>
+                    <span class="detail-value text-muted">No se encontró vehículo registrado</span>
+                </div>
+            </div>
+
+            <!-- Calificaciones y Comentarios -->
+            <div class="section-title">
+                <i class="fas fa-comments"></i> Comentarios de Pasajeros
+            </div>
+            <div class="reviews-list">
+                <div class="review-card" th:each="cal : ${calificaciones}">
+                    <div class="review-header">
+                        <span class="reviewer-name" th:text="${cal.viaje.pasajero.usuario.nombres + ' ' + cal.viaje.pasajero.usuario.apellidos}">Pasajero Anónimo</span>
+                        <div class="review-stars">
+                            <i class="fas fa-star" th:each="i : ${#numbers.sequence(1, cal.puntuacion)}"></i>
+                            <i class="far fa-star" th:each="i : ${cal.puntuacion < 5 ? #numbers.sequence(cal.puntuacion + 1, 5) : {}}" th:if="${cal.puntuacion < 5}"></i>
+                        </div>
+                    </div>
+                    <p class="review-comment" th:text="${cal.comentario != null && cal.comentario != '' ? cal.comentario : 'Sin comentario'}">Excelente servicio, muy recomendado.</p>
+                    <div class="review-date" th:text="${#temporals.format(cal.viaje.fecha, 'dd/MM/yyyy HH:mm')}">18/06/2026 14:32</div>
+                </div>
+                <div class="profile-detail-card" th:if="${#lists.isEmpty(calificaciones)}">
+                    <i class="fas fa-star-half-alt"></i>
+                    <div class="detail-info">
+                        <span class="detail-value text-muted">Aún no tienes calificaciones registradas.</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Botón Cerrar Sesión -->
+            <div class="logout-btn-wrapper">
+                <a href="/auth/logout" class="btn-primary" style="background: rgba(255, 82, 82, 0.1); border: 1px solid var(--danger); color: var(--danger); box-shadow: none;">
+                    <i class="fas fa-sign-out-alt"></i> Cerrar Sesión
+                </a>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/conductor/dashboard" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="/conductor/solicitudes" class="nav-item">
+                <i class="fas fa-list-ul"></i>
+                <span>Solicitudes</span>
+            </a>
+            <a href="/conductor/ganancias" class="nav-item">
+                <i class="fas fa-wallet"></i>
+                <span>Ganancias</span>
+            </a>
+            <a href="/conductor/perfil" class="nav-item active">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>

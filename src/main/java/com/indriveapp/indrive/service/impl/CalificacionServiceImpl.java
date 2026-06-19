@@ -2,6 +2,7 @@ package com.indriveapp.indrive.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
 import com.indriveapp.indrive.model.Calificacion;
 import com.indriveapp.indrive.repository.CalificacionRepository;
@@ -21,5 +22,10 @@ public class CalificacionServiceImpl implements CalificacionService {
     @Override
     public Calificacion buscarPorId(Integer id) {
         return calificacionRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Calificacion> buscarPorConductor(Integer idConductor) {
+        return calificacionRepository.findByViajeConductorIdConductor(idConductor);
     }
 }

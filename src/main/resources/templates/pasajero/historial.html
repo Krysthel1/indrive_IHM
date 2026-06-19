@@ -1,0 +1,137 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Mis Viajes - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            animation: slideUpFade 0.5s ease-out;
+        }
+
+        .history-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.15);
+        }
+
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
+
+        .card-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .card-price {
+            font-weight: 700;
+            color: var(--success);
+            font-size: 1rem;
+        }
+
+        .card-body-route {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
+
+        .route-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+
+        .empty-state i {
+            font-size: 3.5rem;
+            margin-bottom: 1rem;
+            opacity: 0.4;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <h1 class="app-bar-title">Mis Viajes</h1>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content">
+            <!-- Empty state -->
+            <div class="empty-state" th:if="${#lists.isEmpty(viajes)}">
+                <i class="fas fa-history"></i>
+                <h3>No tienes viajes</h3>
+                <p style="font-size: 0.85rem; margin-top: 6px;">Tus solicitudes de viajes completados aparecerán aquí.</p>
+            </div>
+
+            <!-- History List -->
+            <div class="history-list" th:unless="${#lists.isEmpty(viajes)}">
+                <div class="history-card" th:each="v : ${viajes}">
+                    <div class="card-header">
+                        <span class="card-date" th:text="${#temporals.format(v.fecha, 'dd/MM/yyyy HH:mm')}">16/06/2026 14:32</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span th:if="${v.estado == 'COMPLETADO'}" class="badge badge-success">Completado</span>
+                            <span th:if="${v.estado == 'PENDIENTE'}" class="badge badge-primary">Buscando</span>
+                            <span th:if="${v.estado == 'ACEPTADO'}" class="badge badge-primary">Aceptado</span>
+                            <span th:if="${v.estado == 'EN_CURSO'}" class="badge badge-primary">En Curso</span>
+                            <span class="card-price">S/ <span th:text="${v.precioPropuesto}">12.00</span></span>
+                        </div>
+                    </div>
+                    <div class="card-body-route">
+                        <div class="route-item">
+                            <i class="fas fa-dot-circle" style="color: var(--info); font-size: 0.75rem;"></i>
+                            <span th:text="${v.origen}">Origen</span>
+                        </div>
+                        <div class="route-item">
+                            <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 0.75rem;"></i>
+                            <span th:text="${v.destino}">Destino</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/pasajero/dashboard" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="/pasajero/historial" class="nav-item active">
+                <i class="fas fa-car"></i>
+                <span>Viajes</span>
+            </a>
+            <a href="/pasajero/pago" class="nav-item">
+                <i class="fas fa-credit-card"></i>
+                <span>Billetera</span>
+            </a>
+            <a href="/pasajero/perfil" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>
