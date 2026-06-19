@@ -1,0 +1,354 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Dashboard Conductor - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #1a1a1a 0%, #2d2d2d 100%);
+            min-height: 100vh;
+            position: relative;
+        }
+        body::before {
+            content: '';
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(135deg, #E65100 0%, #BF360C 50%, #8B2500 100%);
+            opacity: 0.05;
+            z-index: 0;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            padding: 1rem 2.5rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 4px 30px rgba(0,0,0,0.15);
+            position: sticky;
+            top: 0;
+            z-index: 100;
+        }
+        .navbar-brand {
+            font-size: 2rem;
+            font-weight: 800;
+            background: linear-gradient(135deg, #E65100 0%, #BF360C 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+            letter-spacing: -1px;
+        }
+        .btn-logout {
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+            border: none;
+            border-radius: 30px;
+            font-weight: 700;
+            cursor: pointer;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            text-decoration: none;
+            display: inline-flex;
+            align-items: center;
+            gap: 0.6rem;
+            box-shadow: 0 4px 15px rgba(255, 107, 107, 0.3);
+        }
+        .btn-logout:hover {
+            transform: translateY(-3px);
+            box-shadow: 0 8px 25px rgba(255, 107, 107, 0.4);
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 3rem 2rem;
+            position: relative;
+            z-index: 1;
+        }
+        .welcome-section {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 24px;
+            padding: 4rem;
+            text-align: center;
+            box-shadow: 0 25px 80px rgba(0,0,0,0.3);
+            animation: slideUp 0.8s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            margin-bottom: 3rem;
+            border: 1px solid rgba(255,255,255,0.2);
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(40px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .welcome-section h1 {
+            font-size: 3rem;
+            color: #333;
+            margin-bottom: 1rem;
+            font-weight: 800;
+        }
+        .welcome-section p {
+            color: #666;
+            font-size: 1.2rem;
+            margin-bottom: 1.5rem;
+            font-weight: 500;
+        }
+        .status-badge {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            background: linear-gradient(135deg, #E65100 0%, #BF360C 100%);
+            color: white;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3);
+        }
+        .stats-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 2rem;
+            margin-bottom: 3rem;
+        }
+        .stat-card {
+            background: rgba(255,255,255,0.1);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            color: white;
+            border: 1px solid rgba(255,255,255,0.2);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            animation: fadeIn 0.6s ease-out;
+        }
+        .stat-card:nth-child(1) { animation-delay: 0.1s; }
+        .stat-card:nth-child(2) { animation-delay: 0.2s; }
+        .stat-card:nth-child(3) { animation-delay: 0.3s; }
+        .stat-card:nth-child(4) { animation-delay: 0.4s; }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .stat-card:hover {
+            transform: translateY(-8px) scale(1.05);
+            background: rgba(255,255,255,0.15);
+            box-shadow: 0 20px 50px rgba(0,0,0,0.3);
+        }
+        .stat-card i {
+            font-size: 3rem;
+            margin-bottom: 1rem;
+            color: #ffcc80;
+        }
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 800;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .label {
+            font-size: 1rem;
+            opacity: 0.9;
+            font-weight: 500;
+        }
+        .action-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(300px, 1fr));
+            gap: 2rem;
+        }
+        .action-card {
+            background: rgba(255, 255, 255, 0.98);
+            backdrop-filter: blur(20px);
+            border-radius: 20px;
+            padding: 2.5rem;
+            text-align: center;
+            box-shadow: 0 15px 50px rgba(0,0,0,0.15);
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+            border: 1px solid rgba(255,255,255,0.2);
+            animation: fadeIn 0.6s ease-out;
+        }
+        .action-card:nth-child(1) { animation-delay: 0.5s; }
+        .action-card:nth-child(2) { animation-delay: 0.6s; }
+        .action-card:nth-child(3) { animation-delay: 0.7s; }
+        .action-card:nth-child(4) { animation-delay: 0.8s; }
+        .action-card:hover {
+            transform: translateY(-10px) scale(1.05);
+            box-shadow: 0 25px 70px rgba(0,0,0,0.25);
+        }
+        .action-card i {
+            font-size: 3rem;
+            margin-bottom: 1.5rem;
+            transition: all 0.3s ease;
+        }
+        .action-card:hover i {
+            transform: scale(1.2);
+        }
+        .action-card.solicitudes i {
+            color: #E65100;
+        }
+        .action-card.historial i {
+            color: #4CAF50;
+        }
+        .action-card.ganancias i {
+            color: #2196F3;
+        }
+        .action-card.viaje i {
+            color: #9C27B0;
+        }
+        .action-card h3 {
+            color: #333;
+            margin-bottom: 0.8rem;
+            font-size: 1.3rem;
+            font-weight: 700;
+        }
+        .action-card p {
+            color: #666;
+            font-size: 1rem;
+            font-weight: 500;
+            margin-bottom: 1.5rem;
+        }
+        .btn-action {
+            display: inline-block;
+            padding: 0.8rem 2rem;
+            border-radius: 30px;
+            font-weight: 700;
+            font-size: 1rem;
+            transition: all 0.4s cubic-bezier(0.175, 0.885, 0.32, 1.275);
+            position: relative;
+            overflow: hidden;
+        }
+        .btn-action::before {
+            content: '';
+            position: absolute;
+            top: 0;
+            left: -100%;
+            width: 100%;
+            height: 100%;
+            background: linear-gradient(90deg, transparent, rgba(255,255,255,0.3), transparent);
+            transition: left 0.5s;
+        }
+        .btn-action:hover::before {
+            left: 100%;
+        }
+        .btn-action:hover {
+            transform: scale(1.1);
+        }
+        .btn-solicitudes {
+            background: linear-gradient(135deg, #E65100 0%, #BF360C 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(230, 81, 0, 0.3);
+        }
+        .btn-historial {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(76, 175, 80, 0.3);
+        }
+        .btn-ganancias {
+            background: linear-gradient(135deg, #2196F3 0%, #1976D2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(33, 150, 243, 0.3);
+        }
+        .btn-viaje {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+            color: white;
+            box-shadow: 0 4px 15px rgba(156, 39, 176, 0.3);
+        }
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem 1.5rem;
+            }
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            .welcome-section {
+                padding: 2.5rem;
+            }
+            .welcome-section h1 {
+                font-size: 2rem;
+            }
+            .action-grid {
+                grid-template-columns: 1fr;
+            }
+            .stats-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <span class="navbar-brand">inDrive Conductor</span>
+        <a href="/auth/login" class="btn-logout">
+            <i class="fas fa-sign-out-alt"></i> Salir
+        </a>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>¡Hola, Conductor!</h1>
+            <p>Estado actual: <span class="status-badge">Disponible</span></p>
+            <p>Gana dinero conduciendo cuando quieras</p>
+        </div>
+
+        <div class="stats-grid">
+            <div class="stat-card">
+                <i class="fas fa-car"></i>
+                <div class="number">0</div>
+                <div class="label">Viajes Hoy</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-dollar-sign"></i>
+                <div class="number">$0</div>
+                <div class="label">Ganancias Hoy</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-star"></i>
+                <div class="number">0</div>
+                <div class="label">Calificación</div>
+            </div>
+            <div class="stat-card">
+                <i class="fas fa-clock"></i>
+                <div class="number">0</div>
+                <div class="label">Horas Online</div>
+            </div>
+        </div>
+
+        <div class="action-grid">
+            <a href="/conductor/solicitudes" class="action-card solicitudes">
+                <i class="fas fa-bell"></i>
+                <h3>Solicitudes</h3>
+                <p>Ver viajes disponibles cerca de ti</p>
+                <span class="btn-action btn-solicitudes">Ver Solicitudes</span>
+            </a>
+            <a href="/conductor/viaje" class="action-card viaje">
+                <i class="fas fa-route"></i>
+                <h3>Viaje Actual</h3>
+                <p>Ver tu viaje en curso</p>
+                <span class="btn-action btn-viaje">Ver Viaje</span>
+            </a>
+            <a href="/conductor/historial" class="action-card historial">
+                <i class="fas fa-history"></i>
+                <h3>Historial</h3>
+                <p>Consultar tus viajes realizados</p>
+                <span class="btn-action btn-historial">Ver Historial</span>
+            </a>
+            <a href="/conductor/ganancias" class="action-card ganancias">
+                <i class="fas fa-wallet"></i>
+                <h3>Ganancias</h3>
+                <p>Consultar tus ingresos totales</p>
+                <span class="btn-action btn-ganancias">Ver Ganancias</span>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
