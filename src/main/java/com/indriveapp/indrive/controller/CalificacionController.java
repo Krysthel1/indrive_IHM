@@ -6,7 +6,9 @@ import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
 import com.indriveapp.indrive.model.Calificacion;
+import com.indriveapp.indrive.model.Viaje;
 import com.indriveapp.indrive.service.CalificacionService;
+import com.indriveapp.indrive.service.ViajeService;
 
 @Controller
 @RequestMapping("/calificacion")
@@ -14,6 +16,9 @@ public class CalificacionController {
 
     @Autowired
     private CalificacionService calificacionService;
+
+    @Autowired
+    private ViajeService viajeService;
 
     @GetMapping("/nueva/{viajeId}")
     public String nuevaCalificacion(@PathVariable Integer viajeId, Model model) {
@@ -30,6 +35,11 @@ public class CalificacionController {
         Calificacion calificacion = new Calificacion();
         calificacion.setPuntuacion(puntuacion);
         calificacion.setComentario(comentario);
+        
+        Viaje viaje = viajeService.buscarPorId(viajeId);
+        if (viaje != null) {
+            calificacion.setViaje(viaje);
+        }
         
         calificacionService.guardar(calificacion);
         

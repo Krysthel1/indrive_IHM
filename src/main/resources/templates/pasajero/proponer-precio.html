@@ -1,24 +1,198 @@
-<div class="container mt-5">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Proponer Precio - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .map-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+            z-index: 0;
+            opacity: 0.5;
+        }
 
-    <div class="card shadow p-5 rounded-4">
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(18,18,18,0.2) 0%, rgba(18,18,18,0.8) 50%, rgba(18,18,18,1) 100%);
+            z-index: 1;
+        }
 
-        <h3>
-            Propón tu precio
-        </h3>
+        .app-bar {
+            background: transparent;
+            border-bottom: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
 
-        <div class="mb-4 mt-4">
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-surface);
+            border-radius: 30px 30px 0 0;
+            padding: 2rem 1.5rem;
+            z-index: 2;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            animation: slideUpSheet 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+        }
 
-            <input type="number"
-                   class="form-control form-control-lg"
-                   placeholder="S/ 0.00">
+        @keyframes slideUpSheet {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
 
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .price-input-wrapper {
+            position: relative;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .price-currency {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .price-input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 1.5rem 1.5rem 1.5rem 3.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .price-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.2);
+        }
+
+        .price-suggestions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .price-chip:active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .route-summary {
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .route-summary-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="padding-bottom: 0;">
+        <div class="map-bg" style="opacity: 0.8; z-index: 0; overflow: hidden;">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-overlay"></div>
+
+        <!-- App Bar -->
+        <div class="app-bar">
+            <a href="/pasajero/destino" class="app-bar-btn" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 10;">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div style="width: 40px;"></div>
         </div>
 
-        <a th:href="@{/pasajero/conductores}"
-           class="btn btn-warning w-100">
-            Buscar Conductores
-        </a>
+        <!-- Bottom Sheet -->
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            
+            <div class="route-summary" style="margin-bottom: 1rem;">
+                <div class="route-summary-text" style="color: var(--text-main); font-size: 0.85rem;">
+                    <div style="margin-bottom: 4px;"><i class="fas fa-dot-circle" style="color: var(--info); width: 16px;"></i> <span th:text="${origen}">Origen</span></div>
+                    <div><i class="fas fa-map-marker-alt" style="color: var(--primary); width: 16px;"></i> <span th:text="${destino}">Destino</span></div>
+                </div>
+            </div>
 
+            <h2 class="mb-3 text-center" style="font-size: 1.3rem;">Ofrece tu tarifa</h2>
+
+            <form action="/viaje/guardar" method="post">
+                <input type="hidden" name="origen" th:value="${origen}">
+                <input type="hidden" name="destino" th:value="${destino}">
+
+                <div class="price-input-wrapper" style="margin-bottom: 1.2rem;">
+                    <span class="price-currency">S/</span>
+                    <input type="number" name="precioPropuesto" class="price-input" placeholder="10.00" value="10.00" step="0.5" id="priceInput" required autofocus>
+                </div>
+
+                <div class="price-suggestions" style="margin-bottom: 1.2rem;">
+                    <div class="price-chip" onclick="setPrice(8)">S/ 8</div>
+                    <div class="price-chip" onclick="setPrice(10)">S/ 10</div>
+                    <div class="price-chip" onclick="setPrice(12)">S/ 12</div>
+                    <div class="price-chip" onclick="setPrice(15)">S/ 15</div>
+                </div>
+
+                <button type="submit" class="btn-primary mt-2">
+                    Buscar Conductores
+                </button>
+            </form>
+        </div>
     </div>
 
-</div>
+    <script>
+        function setPrice(val) {
+            document.getElementById('priceInput').value = val.toFixed(2);
+        }
+    </script>
+</body>
+</html>
