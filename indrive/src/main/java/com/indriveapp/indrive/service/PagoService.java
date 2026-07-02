@@ -1,6 +1,6 @@
-package com.indriveapp.service;
+package com.indriveapp.indrive.service;
 
-import com.indriveapp.model.Pago;
+import com.indriveapp.indrive.model.Pago;
 
 public interface PagoService {
 

@@ -1,6 +1,6 @@
-package com.indriveapp.service;
+package com.indriveapp.indrive.service;
 
-import com.indriveapp.model.Viaje;
+import com.indriveapp.indrive.model.Viaje;
 
 public interface ViajeService {
 

@@ -1,29 +1,426 @@
-<div class="container mt-5">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Viaje Actual - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <!-- Leaflet JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .map-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            z-index: 0;
+        }
 
-    <div class="card shadow p-5 rounded-4 text-center">
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(18,18,18,0.2) 0%, rgba(18,18,18,0.7) 40%, rgba(18,18,18,1) 90%);
+            z-index: 1;
+            pointer-events: none;
+        }
 
-        <h3>Viaje en Curso</h3>
+        .app-bar {
+            background: transparent;
+            border-bottom: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
 
-        <h4 class="mt-4">
-            María López
-        </h4>
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-surface);
+            border-radius: 30px 30px 0 0;
+            padding: 1.5rem;
+            z-index: 2;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+        }
 
-        <p>
-            Destino: Open Plaza Piura
-        </p>
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            margin: 0 auto 1rem auto;
+        }
 
-        <p>
-            Precio acordado: S/ 12.00
-        </p>
+        .status-badge-custom {
+            display: inline-block;
+            background: rgba(76, 175, 80, 0.15);
+            color: var(--success);
+            padding: 4px 12px;
+            border-radius: 20px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+        }
 
-        <button class="btn btn-success">
-            Iniciar Viaje
-        </button>
+        .client-info-box {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            background: rgba(255,255,255,0.02);
+            border: 1px solid var(--glass-border);
+            padding: 1rem 1.2rem;
+            border-radius: 16px;
+            margin-bottom: 1.2rem;
+        }
 
-        <button class="btn btn-danger mt-3">
-            Finalizar Viaje
-        </button>
+        .client-details {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
+        .client-avatar {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: linear-gradient(135deg, var(--info) 0%, #1976D2 100%);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: 700;
+            color: white;
+            font-size: 1.1rem;
+        }
+
+        .client-text {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .client-name {
+            font-weight: 600;
+            font-size: 0.95rem;
+        }
+
+        .client-rating {
+            font-size: 0.75rem;
+            color: var(--warning);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
+
+        .price-display {
+            text-align: right;
+        }
+
+        .price-value {
+            font-size: 1.25rem;
+            font-weight: 700;
+            color: var(--success);
+        }
+
+        .route-info {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+            margin-bottom: 1.5rem;
+            background: rgba(255,255,255,0.01);
+            border-radius: 12px;
+            padding: 1rem;
+            border: 1px solid rgba(255,255,255,0.03);
+        }
+
+        .route-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
+
+        .btn-action-container {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+        }
+
+        .btn-action {
+            width: 100%;
+            border-radius: 14px;
+            padding: 1rem;
+            font-size: 1.05rem;
+            font-weight: 600;
+            cursor: pointer;
+            border: none;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            gap: 8px;
+            transition: all 0.2s;
+        }
+
+        .btn-start {
+            background: var(--primary-gradient);
+            color: white;
+        }
+
+        .btn-end {
+            background: var(--success);
+            color: white;
+        }
+
+        .btn-cancel {
+            background: rgba(255, 82, 82, 0.1);
+            border: 1px solid var(--danger);
+            color: var(--danger);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="padding-bottom: 0;">
+        <div id="map" style="position: absolute; top:0; left:0; width:100%; height:100vh; z-index:0;"></div>
+        <div class="map-overlay" style="pointer-events: none;"></div>
+
+        <!-- App Bar -->
+        <div class="app-bar" style="z-index: 10;">
+            <div style="width: 40px;"></div>
+            <h1 class="app-bar-title" style="text-shadow: 0 2px 4px rgba(0,0,0,0.5);">Viaje Activo</h1>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Bottom Sheet -->
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+
+            <div class="status-badge-custom" id="stateBadge" th:text="${viaje.estado == 'ACEPTADO' ? 'Conductor Asignado' : 'Viaje en Curso'}">
+                Conductor Asignado
+            </div>
+
+            <!-- Client Info Box -->
+            <div class="client-info-box">
+                <div class="client-details">
+                    <div class="client-avatar" th:text="${#strings.substring(pasajeroUsuario.nombres,0,1)}">M</div>
+                    <div class="client-text">
+                        <span class="client-name" th:text="${pasajeroUsuario.nombres + ' ' + pasajeroUsuario.apellidos}">María López</span>
+                        <span class="client-rating"><i class="fas fa-star"></i> 5.0 • Pasajero</span>
+                    </div>
+                </div>
+                <div class="price-display">
+                    <div class="price-value">S/ <span th:text="${viaje.precioPropuesto}">12.00</span></div>
+                </div>
+            </div>
+
+            <!-- Route Info -->
+            <div class="route-info" style="display: grid; grid-template-columns: 1fr; gap: 8px;">
+                <div class="route-item">
+                    <i class="fas fa-circle" style="color: var(--info); font-size: 0.8rem;"></i>
+                    <span><strong>Origen:</strong> <span th:text="${viaje.origen}">Origen</span></span>
+                </div>
+                <div class="route-item">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 0.8rem;"></i>
+                    <span><strong>Destino:</strong> <span th:text="${viaje.destino}">Destino</span></span>
+                </div>
+                <div style="display: flex; gap: 10px; margin-top: 5px; border-top: 1px solid rgba(255,255,255,0.05); padding-top: 8px;">
+                    <div class="route-item" style="flex: 1;">
+                        <i class="fas fa-route" style="color: var(--info); font-size: 0.8rem;"></i>
+                        <span><strong>Distancia:</strong> <span th:text="${viaje.distancia != null ? viaje.distancia + ' km' : 'Calculando...'}">3.2 km</span></span>
+                    </div>
+                    <div class="route-item" style="flex: 1;">
+                        <i class="fas fa-clock" style="color: var(--warning); font-size: 0.8rem;"></i>
+                        <span><strong>Duración:</strong> <span th:text="${viaje.duracion != null ? viaje.duracion + ' min' : 'Calculando...'}">9 min</span></span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Actions container -->
+            <div class="btn-action-container" style="flex-direction: column; gap: 10px;">
+                <!-- Botón Llegué al punto (Visible cuando ACEPTADO) -->
+                <button th:style="${viaje.estado == 'ACEPTADO'} ? '' : 'display:none;'" id="btnArrive" class="btn-action" style="background: var(--info); color: white; width: 100%;" onclick="updateState('LLEGO')">
+                    <i class="fas fa-map-marker-alt"></i> Llegué al punto
+                </button>
+
+                <!-- Cronómetro de espera (Visible cuando LLEGO o ESPERANDO_PASAJERO) -->
+                <div id="waitTimerContainer" style="display:none; text-align: center; background: rgba(255,255,255,0.05); padding: 10px; border-radius: 12px; border: 1px solid var(--glass-border);">
+                    <div style="font-size: 0.8rem; color: var(--text-muted); margin-bottom: 5px;" id="waitTimerLabel">Esperando confirmación del pasajero...</div>
+                    <div style="font-size: 2.2rem; font-weight: 700; color: var(--warning); font-family: monospace;" id="waitTimerDisplay">05:00</div>
+                </div>
+
+                <!-- Botón Iniciar Viaje (Visible luego de llegar) -->
+                <button style="display:none; width: 100%;" id="btnStart" class="btn-action btn-start" onclick="updateState('EN_CURSO')">
+                    <i class="fas fa-play"></i> Iniciar Viaje
+                </button>
+                
+                <button th:style="${viaje.estado == 'EN_CURSO'} ? 'width: 100%;' : 'display:none; width: 100%;'" id="btnEnd" class="btn-action btn-end" onclick="updateState('COMPLETADO')">
+                    <i class="fas fa-flag-checkered"></i> Finalizar Viaje
+                </button>
+                
+                <button id="btnCancel" class="btn-action btn-cancel" style="width: 100%;" onclick="cancelTrip()">
+                    Cancelar Viaje
+                </button>
+            </div>
+        </div>
     </div>
 
-</div>
+    <script th:inline="javascript">
+        const viajeId = [[${viaje.idViaje}]];
+
+        let timerInterval;
+        let timeLeft = 300; // 5 minutes
+
+        function startTimer() {
+            document.getElementById('waitTimerContainer').style.display = 'block';
+            clearInterval(timerInterval);
+            timerInterval = setInterval(() => {
+                if(timeLeft <= 0) {
+                    clearInterval(timerInterval);
+                    document.getElementById('waitTimerDisplay').innerText = "00:00";
+                    document.getElementById('waitTimerLabel').innerText = "Tiempo agotado";
+                    document.getElementById('waitTimerLabel').style.color = "var(--danger)";
+                    return;
+                }
+                timeLeft--;
+                const m = Math.floor(timeLeft / 60).toString().padStart(2, '0');
+                const s = (timeLeft % 60).toString().padStart(2, '0');
+                document.getElementById('waitTimerDisplay').innerText = `${m}:${s}`;
+            }, 1000);
+        }
+
+        function checkTripStatus() {
+            fetch('/viaje/api/estado')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.estado === 'CANCELADO' || data.estado === 'NINGUNO' || !data.estado) {
+                        alert("El viaje ha sido cancelado por el pasajero.");
+                        window.location.href = '/conductor/dashboard';
+                    }
+                    if (data.estado === 'ESPERANDO_PASAJERO') {
+                        document.getElementById('waitTimerLabel').innerText = "El pasajero va en camino...";
+                        document.getElementById('waitTimerLabel').style.color = "var(--success)";
+                    }
+                })
+                .catch(err => console.error("Error checking trip status: ", err));
+        }
+        setInterval(checkTripStatus, 3000);
+        checkTripStatus();
+
+        function updateState(newState) {
+            const formData = new FormData();
+            formData.append('viajeId', viajeId);
+            formData.append('nuevoEstado', newState);
+
+            fetch('/viaje/api/cambiar-estado', {
+                method: 'POST',
+                body: formData
+            })
+            .then(res => res.json())
+            .then(data => {
+                if (data.success) {
+                    if (newState === 'LLEGO') {
+                        document.getElementById('stateBadge').innerText = "Esperando al pasajero";
+                        document.getElementById('btnArrive').style.display = 'none';
+                        document.getElementById('btnStart').style.display = 'flex';
+                        startTimer();
+                    } else if (newState === 'EN_CURSO') {
+                        clearInterval(timerInterval);
+                        document.getElementById('waitTimerContainer').style.display = 'none';
+                        document.getElementById('stateBadge').innerText = "Viaje en Curso";
+                        document.getElementById('btnStart').style.display = 'none';
+                        document.getElementById('btnEnd').style.display = 'flex';
+                    } else if (newState === 'COMPLETADO') {
+                        // Redirect to history/earnings
+                        window.location.href = '/conductor/dashboard';
+                    }
+                } else {
+                    alert("No se pudo actualizar el estado.");
+                }
+            })
+            .catch(err => console.error("Error updating trip status: ", err));
+        }
+
+        function cancelTrip() {
+            if (confirm("¿Estás seguro de cancelar este viaje?")) {
+                updateState('CANCELADO');
+            }
+        }
+
+        // Leaflet logic
+        let map;
+
+        function getCoordinates(address) {
+            return fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Piura')}&limit=1`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+                    }
+                    return [-5.180252, -80.629471]; // Fallback to Piura
+                });
+        }
+
+        async function initMap() {
+            const piura = [-5.180252, -80.629471];
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView(piura, 13);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(map);
+
+            const origenText = [[${viaje.origen}]];
+            const destinoText = [[${viaje.destino}]];
+
+            const originCoords = await getCoordinates(origenText);
+            const destCoords = await getCoordinates(destinoText);
+
+            // Origin Marker Custom UI
+            const originIcon = L.divIcon({
+                className: 'custom-origin',
+                html: `<div style="width:16px;height:16px;background:#0A84FF;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(10,132,255,0.8);"></div>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+            L.marker(originCoords, {icon: originIcon}).addTo(map);
+
+            // Destination Marker Custom UI
+            const destIcon = L.divIcon({
+                className: 'custom-dest',
+                html: `<div style="width:16px;height:16px;background:#FF6D00;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(255,109,0,0.8);"></div>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+            L.marker(destCoords, {icon: destIcon}).addTo(map);
+
+            // Fit bounds
+            const bounds = L.latLngBounds(originCoords, destCoords);
+            map.fitBounds(bounds, { padding: [50, 50] });
+
+            // OSRM Routing
+            fetch(`https://router.project-osrm.org/route/v1/driving/${originCoords[1]},${originCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.routes && data.routes.length > 0) {
+                        const route = data.routes[0];
+                        const routeCoords = route.geometry.coordinates.map(c => [c[1], c[0]]);
+                        L.polyline(routeCoords, {
+                            color: '#FF6D00',
+                            weight: 5,
+                            opacity: 0.8
+                        }).addTo(map);
+                    }
+                })
+                .catch(err => console.error("OSRM Routing failed", err));
+        }
+
+        window.addEventListener('load', initMap);
+    </script>
+</body>
+</html>

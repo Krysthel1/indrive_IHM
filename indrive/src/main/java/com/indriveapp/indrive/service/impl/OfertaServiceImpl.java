@@ -1,11 +1,11 @@
-package com.indriveapp.service.impl;
+package com.indriveapp.indrive.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indriveapp.model.Oferta;
-import com.indriveapp.repository.OfertaRepository;
-import com.indriveapp.service.OfertaService;
+import com.indriveapp.indrive.model.Oferta;
+import com.indriveapp.indrive.repository.OfertaRepository;
+import com.indriveapp.indrive.service.OfertaService;
 
 @Service
 public class OfertaServiceImpl implements OfertaService {

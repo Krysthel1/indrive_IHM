@@ -1,13 +1,13 @@
-package com.indriveapp.service.impl;
+package com.indriveapp.indrive.service.impl;
 
 import java.util.Optional;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indriveapp.model.Usuario;
-import com.indriveapp.repository.UsuarioRepository;
-import com.indriveapp.service.UsuarioService;
+import com.indriveapp.indrive.model.Usuario;
+import com.indriveapp.indrive.repository.UsuarioRepository;
+import com.indriveapp.indrive.service.UsuarioService;
 
 @Service
 public class UsuarioServiceImpl implements UsuarioService {

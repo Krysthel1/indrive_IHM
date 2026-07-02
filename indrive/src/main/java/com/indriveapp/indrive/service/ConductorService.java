@@ -1,6 +1,6 @@
-package com.indriveapp.service;
+package com.indriveapp.indrive.service;
 
-import com.indriveapp.model.Conductor;
+import com.indriveapp.indrive.model.Conductor;
 
 public interface ConductorService {
     Conductor guardar(Conductor conductor);

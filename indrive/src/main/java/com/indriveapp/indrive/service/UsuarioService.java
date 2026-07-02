@@ -1,7 +1,7 @@
-package com.indriveapp.service;
+package com.indriveapp.indrive.service;
 
 import java.util.Optional;
-import com.indriveapp.model.Usuario;
+import com.indriveapp.indrive.model.Usuario;
 
 public interface UsuarioService {
 

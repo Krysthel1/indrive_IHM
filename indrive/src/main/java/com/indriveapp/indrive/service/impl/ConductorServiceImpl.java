@@ -1,11 +1,11 @@
-package com.indriveapp.service.impl;
+package com.indriveapp.indrive.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indriveapp.model.Conductor;
-import com.indriveapp.repository.ConductorRepository;
-import com.indriveapp.service.ConductorService;
+import com.indriveapp.indrive.model.Conductor;
+import com.indriveapp.indrive.repository.ConductorRepository;
+import com.indriveapp.indrive.service.ConductorService;
 
 @Service
 public class ConductorServiceImpl

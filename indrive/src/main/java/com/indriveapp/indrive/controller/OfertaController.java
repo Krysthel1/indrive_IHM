@@ -1,12 +1,13 @@
-package com.indriveapp.controller;
+package com.indriveapp.indrive.controller;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.Model;
 import org.springframework.web.bind.annotation.*;
 
-import com.indriveapp.model.Oferta;
-import com.indriveapp.service.OfertaService;
+import com.indriveapp.indrive.model.*;
+import com.indriveapp.indrive.repository.*;
+import com.indriveapp.indrive.service.OfertaService;
 
 @Controller
 @RequestMapping("/oferta")
@@ -14,6 +15,12 @@ public class OfertaController {
 
     @Autowired
     private OfertaService ofertaService;
+
+    @Autowired
+    private ViajeRepository viajeRepository;
+
+    @Autowired
+    private ConductorRepository conductorRepository;
 
     @GetMapping("/enviar/{viajeId}")
     public String enviarOferta(@PathVariable Integer viajeId, Model model) {
@@ -28,11 +35,17 @@ public class OfertaController {
             @RequestParam Double precio,
             @RequestParam Integer tiempoLlegada) {
         
-        Oferta oferta = new Oferta();
-        oferta.setPrecio(precio);
-        oferta.setTiempoLlegada(tiempoLlegada);
-        
-        ofertaService.guardar(oferta);
+        Viaje viaje = viajeRepository.findById(viajeId).orElse(null);
+        Conductor conductor = conductorRepository.findById(conductorId).orElse(null);
+
+        if (viaje != null && conductor != null) {
+            Oferta oferta = new Oferta();
+            oferta.setViaje(viaje);
+            oferta.setConductor(conductor);
+            oferta.setPrecio(precio);
+            oferta.setTiempoLlegada(tiempoLlegada);
+            ofertaService.guardar(oferta);
+        }
         
         return "redirect:/conductor/solicitudes";
     }

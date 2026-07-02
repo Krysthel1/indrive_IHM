@@ -1,6 +1,6 @@
-package com.indriveapp.service;
+package com.indriveapp.indrive.service;
 
-import com.indriveapp.model.Pasajero;
+import com.indriveapp.indrive.model.Pasajero;
 
 public interface PasajeroService {
     Pasajero guardar(Pasajero pasajero);

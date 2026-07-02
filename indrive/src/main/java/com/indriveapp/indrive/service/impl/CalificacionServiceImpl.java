@@ -1,11 +1,12 @@
-package com.indriveapp.service.impl;
+package com.indriveapp.indrive.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import java.util.List;
 
-import com.indriveapp.model.Calificacion;
-import com.indriveapp.repository.CalificacionRepository;
-import com.indriveapp.service.CalificacionService;
+import com.indriveapp.indrive.model.Calificacion;
+import com.indriveapp.indrive.repository.CalificacionRepository;
+import com.indriveapp.indrive.service.CalificacionService;
 
 @Service
 public class CalificacionServiceImpl implements CalificacionService {
@@ -21,5 +22,10 @@ public class CalificacionServiceImpl implements CalificacionService {
     @Override
     public Calificacion buscarPorId(Integer id) {
         return calificacionRepository.findById(id).orElse(null);
+    }
+
+    @Override
+    public List<Calificacion> buscarPorConductor(Integer idConductor) {
+        return calificacionRepository.findByViajeConductorIdConductor(idConductor);
     }
 }

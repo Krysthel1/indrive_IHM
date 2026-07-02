@@ -1,11 +1,11 @@
-package com.indriveapp.service.impl;
+package com.indriveapp.indrive.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indriveapp.model.Vehiculo;
-import com.indriveapp.repository.VehiculoRepository;
-import com.indriveapp.service.VehiculoService;
+import com.indriveapp.indrive.model.Vehiculo;
+import com.indriveapp.indrive.repository.VehiculoRepository;
+import com.indriveapp.indrive.service.VehiculoService;
 
 @Service
 public class VehiculoServiceImpl

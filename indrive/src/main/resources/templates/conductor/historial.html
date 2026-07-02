@@ -1,33 +1,146 @@
-<div class="container mt-5">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Historial - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            animation: slideUpFade 0.5s ease-out;
+        }
 
-    <h3 class="mb-4">
-        Historial de Viajes
-    </h3>
+        .history-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.2rem;
+        }
 
-    <table class="table table-bordered">
+        .card-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            border-bottom: 1px solid rgba(255,255,255,0.05);
+            padding-bottom: 8px;
+            margin-bottom: 10px;
+        }
 
-        <thead>
+        .card-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
 
-        <tr>
-            <th>Pasajero</th>
-            <th>Destino</th>
-            <th>Fecha</th>
-            <th>Monto</th>
-        </tr>
+        .card-price {
+            font-weight: 700;
+            color: var(--success);
+            font-size: 1rem;
+        }
 
-        </thead>
+        .card-body-route {
+            display: flex;
+            flex-direction: column;
+            gap: 6px;
+            font-size: 0.85rem;
+        }
 
-        <tbody>
+        .route-item {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+        }
 
-        <tr>
-            <td>María López</td>
-            <td>Open Plaza Piura</td>
-            <td>16/06/2026</td>
-            <td>S/ 12.00</td>
-        </tr>
+        .passenger-row {
+            display: flex;
+            align-items: center;
+            gap: 6px;
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            margin-top: 8px;
+            padding-top: 8px;
+            border-top: 1px solid rgba(255,255,255,0.04);
+        }
 
-        </tbody>
+        .empty-state {
+            text-align: center;
+            padding: 4rem 2rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <a href="/conductor/dashboard" class="app-bar-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="app-bar-title">Historial</h1>
+            <div style="width: 40px;"></div>
+        </div>
 
-    </table>
+        <!-- Main Content -->
+        <div class="app-content">
+            <div class="empty-state" th:if="${#lists.isEmpty(viajes)}">
+                <i class="fas fa-history" style="font-size: 3.5rem; opacity: 0.3; margin-bottom: 1rem;"></i>
+                <h3>Sin historial</h3>
+                <p style="font-size: 0.85rem; margin-top: 6px;">Los viajes completados aparecerán aquí.</p>
+            </div>
 
-</div>
+            <div class="history-list" th:unless="${#lists.isEmpty(viajes)}">
+                <div class="history-card" th:each="v : ${viajes}">
+                    <div class="card-header">
+                        <span class="card-date" th:text="${v.fecha != null ? #temporals.format(v.fecha, 'dd/MM/yyyy HH:mm') : 'Fecha no disponible'}">16/06/2026 14:32</span>
+                        <div style="display:flex; align-items:center; gap:8px;">
+                            <span th:if="${v.estado == 'COMPLETADO'}" class="badge badge-success">Completado</span>
+                            <span th:if="${v.estado == 'PENDIENTE'}" class="badge badge-primary">Pendiente</span>
+                            <span th:if="${v.estado == 'ACEPTADO'}" class="badge badge-primary">Aceptado</span>
+                            <span th:if="${v.estado == 'EN_CURSO'}" class="badge badge-primary">En Curso</span>
+                            <span class="card-price">S/ <span th:text="${v.precioPropuesto}">12.00</span></span>
+                        </div>
+                    </div>
+                    <div class="card-body-route">
+                        <div class="route-item">
+                            <i class="fas fa-dot-circle" style="color: var(--info); font-size: 0.75rem;"></i>
+                            <span th:text="${v.origen}">Origen</span>
+                        </div>
+                        <div class="route-item">
+                            <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 0.75rem;"></i>
+                            <span th:text="${v.destino}">Destino</span>
+                        </div>
+                    </div>
+                    <div class="passenger-row" th:if="${v.pasajero != null}">
+                        <i class="fas fa-user"></i>
+                        <span th:text="${v.pasajero.usuario.nombres + ' ' + v.pasajero.usuario.apellidos}">Pasajero</span>
+                    </div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/conductor/dashboard" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="/conductor/solicitudes" class="nav-item">
+                <i class="fas fa-list"></i>
+                <span>Solicitudes</span>
+            </a>
+            <a href="/conductor/ganancias" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Ganancias</span>
+            </a>
+            <a href="/conductor/perfil" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>

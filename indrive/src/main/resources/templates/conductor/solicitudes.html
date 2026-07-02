@@ -1,24 +1,296 @@
-<div class="container mt-5">
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Solicitudes - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .request-card {
+            background: var(--bg-surface);
+            border-radius: 20px;
+            padding: 1.5rem;
+            border: 1px solid var(--glass-border);
+            margin-bottom: 1rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.2);
+            animation: slideUpFade 0.4s ease-out;
+        }
 
-    <h3 class="mb-4">
-        Solicitudes Disponibles
-    </h3>
+        .request-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 1rem;
+            padding-bottom: 1rem;
+            border-bottom: 1px solid rgba(255,255,255,0.1);
+        }
 
-    <div class="card shadow p-4 mb-3">
+        .passenger-info {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
 
-        <h5>Pasajero: María López</h5>
+        .passenger-avatar {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-weight: bold;
+            color: white;
+        }
 
-        <p>Origen: Universidad Nacional de Piura</p>
+        .passenger-name {
+            font-weight: 600;
+            font-size: 1rem;
+        }
 
-        <p>Destino: Open Plaza Piura</p>
+        .passenger-rating {
+            font-size: 0.8rem;
+            color: var(--text-muted);
+            display: flex;
+            align-items: center;
+            gap: 4px;
+        }
 
-        <p>Precio propuesto: S/ 10.00</p>
+        .passenger-rating i {
+            color: var(--warning);
+        }
 
-        <a th:href="@{/conductor/oferta}"
-           class="btn btn-warning">
-            Enviar Oferta
-        </a>
+        .price-badge {
+            background: rgba(76, 175, 80, 0.2);
+            color: var(--success);
+            padding: 6px 12px;
+            border-radius: 20px;
+            font-weight: 700;
+            font-size: 1.1rem;
+        }
 
+        .route-info {
+            position: relative;
+            padding-left: 20px;
+            margin-bottom: 1.5rem;
+        }
+
+        .route-line {
+            position: absolute;
+            left: 4px;
+            top: 10px;
+            bottom: 10px;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+            z-index: 1;
+        }
+
+        .route-point {
+            position: relative;
+            margin-bottom: 1rem;
+            z-index: 2;
+        }
+
+        .route-point:last-child {
+            margin-bottom: 0;
+        }
+
+        .route-point i {
+            position: absolute;
+            left: -20px;
+            top: 3px;
+            font-size: 0.8rem;
+        }
+
+        .route-point.origin i { color: var(--info); }
+        .route-point.dest i { color: var(--primary); }
+
+        .point-label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-bottom: 2px;
+        }
+
+        .point-address {
+            font-size: 0.95rem;
+            font-weight: 500;
+        }
+
+        .request-actions {
+            display: flex;
+            gap: 1rem;
+        }
+
+        .btn-decline {
+            background: rgba(255, 82, 82, 0.1);
+            color: var(--danger);
+            border: 1px solid var(--danger);
+            border-radius: 14px;
+            padding: 1rem;
+            font-weight: 600;
+            cursor: pointer;
+            width: 60px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            transition: all 0.2s;
+        }
+
+        .btn-decline:active {
+            background: rgba(255, 82, 82, 0.2);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <a href="/conductor/dashboard" class="app-bar-btn">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <h1 class="app-bar-title">Solicitudes</h1>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content">
+            
+            <!-- Offline state -->
+            <div th:if="${!conductor.disponibilidad}" style="text-align: center; padding: 4rem 2rem; color: var(--text-muted); animation: slideUpFade 0.5s ease-out;">
+                <i class="fas fa-signal-slash mb-3" style="font-size: 3.5rem; color: var(--danger); opacity: 0.8;"></i>
+                <h3 style="font-size: 1.2rem; color: white;">Estás desconectado</h3>
+                <p style="font-size: 0.85rem; margin-top: 8px; line-height: 1.4;">Por favor, actívate en la pantalla de Inicio para recibir solicitudes de pasajeros en tiempo real.</p>
+                <a href="/conductor/dashboard" class="btn-primary mt-4" style="font-size: 0.95rem; padding: 12px;">Ir a Inicio</a>
+            </div>
+
+            <!-- Active Requests Container -->
+            <div th:if="${conductor.disponibilidad}" id="requestsContainer">
+                <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);" id="emptyRequests">
+                    <i class="fas fa-search mb-3" style="font-size: 3rem; opacity: 0.5; color: var(--primary); animation: pulse-radar 2s infinite;"></i>
+                    <p style="font-size: 0.9rem; margin:0;">Buscando pasajeros cercanos...</p>
+                </div>
+            </div>
+
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/conductor/dashboard" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="/conductor/solicitudes" class="nav-item active">
+                <i class="fas fa-list"></i>
+                <span>Solicitudes</span>
+            </a>
+            <a href="/conductor/ganancias" class="nav-item">
+                <i class="fas fa-chart-line"></i>
+                <span>Ganancias</span>
+            </a>
+            <a href="/conductor/perfil" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
     </div>
 
-</div>
+    <script th:inline="javascript" th:if="${conductor.disponibilidad}">
+        function fetchRequests() {
+            fetch('/conductor/api/solicitudes')
+                .then(res => res.json())
+                .then(requests => {
+                    const container = document.getElementById('requestsContainer');
+                    if (requests.length === 0) {
+                        container.innerHTML = `
+                            <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);" id="emptyRequests">
+                                <i class="fas fa-search mb-3" style="font-size: 3rem; opacity: 0.5; color: var(--primary); animation: pulse-radar 2s infinite;"></i>
+                                <p style="font-size: 0.9rem; margin:0;">Buscando pasajeros cercanos...</p>
+                            </div>
+                        `;
+                        return;
+                    }
+
+                    let html = '';
+                    requests.forEach(r => {
+                        const avatarLetter = r.nombrePasajero.charAt(0);
+                        html += `
+                            <div class="request-card">
+                                <div class="request-header">
+                                    <div class="passenger-info">
+                                        <div class="passenger-avatar">${avatarLetter}</div>
+                                        <div>
+                                            <div class="passenger-name">${r.nombrePasajero}</div>
+                                            <div class="passenger-rating">5.0 <i class="fas fa-star"></i></div>
+                                        </div>
+                                    </div>
+                                    <div class="price-badge">
+                                        S/ ${r.precioPropuesto.toFixed(2)}
+                                    </div>
+                                </div>
+
+                                <div class="route-info">
+                                    <div class="route-line"></div>
+                                    <div class="route-point origin">
+                                        <i class="fas fa-circle"></i>
+                                        <div class="point-label">Origen</div>
+                                        <div class="point-address">${r.origen}</div>
+                                    </div>
+                                    <div class="route-point dest">
+                                        <i class="fas fa-map-marker-alt"></i>
+                                        <div class="point-label">Destino</div>
+                                        <div class="point-address">${r.destino}</div>
+                                    </div>
+                                </div>
+
+                                <div class="request-actions">
+                                    <button class="btn-decline" onclick="declineCard(this)"><i class="fas fa-times"></i></button>
+                                    <a href="/conductor/oferta?viajeId=${r.idViaje}" class="btn-primary" style="flex: 1; text-align: center; text-decoration: none;">
+                                        Ofrecer Tarifa
+                                    </a>
+                                </div>
+                            </div>
+                        `;
+                    });
+                    container.innerHTML = html;
+                })
+                .catch(err => console.error("Error fetching solicitudes: ", err));
+        }
+
+        function declineCard(btn) {
+            const card = btn.closest('.request-card');
+            card.style.opacity = '0.3';
+            card.style.pointerEvents = 'none';
+            setTimeout(() => {
+                card.remove();
+                if(document.querySelectorAll('.request-card').length === 0) {
+                    document.getElementById('requestsContainer').innerHTML = `
+                        <div style="text-align: center; padding: 4rem 2rem; color: var(--text-muted);" id="emptyRequests">
+                            <i class="fas fa-search mb-3" style="font-size: 3rem; opacity: 0.5; color: var(--primary);"></i>
+                            <p style="font-size: 0.9rem; margin:0;">Buscando pasajeros cercanos...</p>
+                        </div>
+                    `;
+                }
+            }, 400);
+        }
+
+        function checkActiveTrip() {
+            fetch('/viaje/api/estado')
+                .then(res => res.json())
+                .then(data => {
+                    if (data.estado === 'ACEPTADO' || data.estado === 'EN_CURSO') {
+                        window.location.href = '/conductor/viaje';
+                    }
+                })
+                .catch(err => console.error("Error checking active trip: ", err));
+        }
+
+        // Poll every 3 seconds
+        setInterval(fetchRequests, 3000);
+        setInterval(checkActiveTrip, 3000);
+        fetchRequests();
+        checkActiveTrip();
+    </script>
+</body>
+</html>

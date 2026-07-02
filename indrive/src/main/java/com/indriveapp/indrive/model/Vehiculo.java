@@ -1,4 +1,4 @@
-package com.indriveapp.model;
+package com.indriveapp.indrive.model;
 
 import jakarta.persistence.*;
 

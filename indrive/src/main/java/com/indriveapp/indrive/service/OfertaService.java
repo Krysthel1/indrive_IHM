@@ -1,6 +1,6 @@
-package com.indriveapp.service;
+package com.indriveapp.indrive.service;
 
-import com.indriveapp.model.Oferta;
+import com.indriveapp.indrive.model.Oferta;
 
 public interface OfertaService {
 

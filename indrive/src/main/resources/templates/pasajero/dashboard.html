@@ -2,236 +2,276 @@
 <html xmlns:th="http://www.thymeleaf.org">
 <head>
     <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Dashboard Pasajero - inDrive</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pasajero - inDrive</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
     <style>
-        * {
-            margin: 0;
-            padding: 0;
-            box-sizing: border-box;
-        }
-        body {
-            font-family: 'Poppins', sans-serif;
-            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
-            min-height: 100vh;
-        }
-        .navbar {
-            background: rgba(255, 255, 255, 0.95);
-            backdrop-filter: blur(10px);
-            padding: 1rem 2rem;
-            display: flex;
-            justify-content: space-between;
-            align-items: center;
-            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
-        }
-        .navbar-brand {
-            font-size: 1.8rem;
-            font-weight: 700;
-            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
-            -webkit-background-clip: text;
-            -webkit-text-fill-color: transparent;
-            background-clip: text;
-        }
-        .btn-logout {
-            padding: 0.6rem 1.5rem;
-            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
-            color: white;
-            border: none;
-            border-radius: 25px;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            display: inline-flex;
-            align-items: center;
-            gap: 0.5rem;
-        }
-        .btn-logout:hover {
-            transform: translateY(-2px);
-            box-shadow: 0 5px 15px rgba(255, 107, 107, 0.3);
-        }
-        .container {
-            max-width: 1200px;
-            margin: 0 auto;
-            padding: 2rem;
-        }
-        .welcome-section {
-            background: white;
+        .map-placeholder {
+            background: linear-gradient(180deg, rgba(30,30,30,0) 0%, var(--bg-dark) 100%),
+                        url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+            height: 250px;
             border-radius: 20px;
-            padding: 3rem;
-            text-align: center;
-            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
-            animation: slideUp 0.6s ease-out;
-            margin-bottom: 2rem;
+            margin-bottom: 1.5rem;
+            position: relative;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
+            border: 1px solid var(--glass-border);
         }
-        @keyframes slideUp {
-            from { opacity: 0; transform: translateY(30px); }
-            to { opacity: 1; transform: translateY(0); }
-        }
-        .welcome-section h1 {
+        
+        .map-pin {
+            position: absolute;
+            top: 50%;
+            left: 50%;
+            transform: translate(-50%, -50%);
+            color: var(--primary);
             font-size: 2.5rem;
-            color: #333;
-            margin-bottom: 0.5rem;
+            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
+            animation: bounce 2s infinite;
         }
-        .welcome-section p {
-            color: #666;
-            font-size: 1.1rem;
-            margin-bottom: 2rem;
+
+        @keyframes bounce {
+            0%, 20%, 50%, 80%, 100% {transform: translate(-50%, -50%);}
+            40% {transform: translate(-50%, -60px);}
+            60% {transform: translate(-50%, -40px);}
         }
-        .btn-ride {
-            display: inline-flex;
-            align-items: center;
-            gap: 0.8rem;
-            padding: 1.2rem 3rem;
-            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
-            color: white;
-            border: none;
-            border-radius: 50px;
-            font-size: 1.1rem;
-            font-weight: 600;
-            cursor: pointer;
-            transition: all 0.3s ease;
-            text-decoration: none;
-            box-shadow: 0 10px 30px rgba(255, 102, 0, 0.3);
-        }
-        .btn-ride:hover {
-            transform: translateY(-3px);
-            box-shadow: 0 15px 40px rgba(255, 102, 0, 0.4);
-        }
-        .quick-actions {
+
+        .ride-options {
             display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+            grid-template-columns: 1fr 1fr;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .action-card {
-            background: white;
-            border-radius: 15px;
-            padding: 2rem;
+
+        .ride-option {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem;
             text-align: center;
-            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
-            transition: all 0.3s ease;
+            transition: all 0.3s;
             cursor: pointer;
             text-decoration: none;
             color: inherit;
         }
-        .action-card:hover {
-            transform: translateY(-5px);
-            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+
+        .ride-option:active {
+            transform: scale(0.95);
+            background: rgba(255, 255, 255, 0.1);
         }
-        .action-card i {
-            font-size: 2.5rem;
-            color: #FF6600;
-            margin-bottom: 1rem;
-        }
-        .action-card h3 {
-            color: #333;
+
+        .ride-option i {
+            font-size: 2rem;
+            color: var(--primary);
             margin-bottom: 0.5rem;
-            font-size: 1.1rem;
         }
-        .action-card p {
-            color: #666;
+
+        .ride-option span {
+            display: block;
+            font-weight: 600;
             font-size: 0.9rem;
         }
-        .stats-grid {
-            display: grid;
-            grid-template-columns: repeat(auto-fit, minmax(200px, 1fr));
-            gap: 1.5rem;
-            margin-top: 2rem;
+
+        .stats-row {
+            display: flex;
+            gap: 1rem;
+            margin-bottom: 1.5rem;
         }
-        .stat-card {
-            background: rgba(255,255,255,0.1);
-            backdrop-filter: blur(10px);
-            border-radius: 15px;
-            padding: 1.5rem;
+
+        .stat-box {
+            flex: 1;
+            background: rgba(255, 255, 255, 0.05);
+            border-radius: 16px;
+            padding: 1rem;
             text-align: center;
-            color: white;
+            border: 1px solid var(--glass-border);
         }
-        .stat-card i {
-            font-size: 2rem;
-            margin-bottom: 0.5rem;
-        }
-        .stat-card .number {
-            font-size: 2rem;
+
+        .stat-box .num {
+            font-size: 1.5rem;
             font-weight: 700;
+            color: var(--primary);
         }
-        .stat-card .label {
-            font-size: 0.9rem;
-            opacity: 0.9;
-        }
-        @media (max-width: 768px) {
-            .navbar {
-                padding: 1rem;
-            }
-            .navbar-brand {
-                font-size: 1.5rem;
-            }
-            .welcome-section {
-                padding: 2rem;
-            }
-            .welcome-section h1 {
-                font-size: 2rem;
-            }
-            .quick-actions {
-                grid-template-columns: 1fr;
-            }
+
+        .stat-box .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
         }
     </style>
 </head>
 <body>
-    <nav class="navbar">
-        <span class="navbar-brand">inDrive</span>
-        <a href="/auth/login" class="btn-logout">
-            <i class="fas fa-sign-out-alt"></i> Salir
-        </a>
-    </nav>
-
-    <div class="container">
-        <div class="welcome-section">
-            <h1>¿A dónde vamos hoy?</h1>
-            <p>Solicita un viaje en segundos con los mejores conductores</p>
-            <a href="/pasajero/destino" class="btn-ride">
-                <i class="fas fa-car"></i> Pedir un Viaje
+    <div class="app-container">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <h1 class="app-bar-title">inDrive</h1>
+            <a href="/auth/logout" class="app-bar-btn" title="Cerrar Sesión">
+                <i class="fas fa-sign-out-alt" style="color: var(--danger);"></i>
             </a>
         </div>
 
-        <div class="stats-grid">
-            <div class="stat-card">
-                <i class="fas fa-route"></i>
-                <div class="number">0</div>
-                <div class="label">Viajes Totales</div>
+        <!-- Main Content -->
+        <div class="app-content animate-slide-up">
+            <h2 class="mb-1" style="font-size: 1.5rem;">Hola, <span th:text="${usuarioLogueado.nombres}">Pasajero</span></h2>
+            <p class="text-muted mb-3">¿A dónde vamos hoy?</p>
+
+            <!-- Leaflet JS API (Free, No API Key needed) -->
+            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+            <style>
+                .custom-user-marker {
+                    display: flex;
+                    flex-direction: column;
+                    align-items: center;
+                    position: absolute;
+                    top: -45px;
+                    left: -16px;
+                }
+                .custom-user-marker .icon-box {
+                    background: white;
+                    border-radius: 8px;
+                    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    width: 32px;
+                    height: 32px;
+                }
+                .custom-user-marker .icon-box i {
+                    color: black;
+                    font-size: 18px;
+                }
+                .custom-user-marker .line {
+                    width: 2px;
+                    height: 15px;
+                    background: white;
+                }
+                .custom-user-marker .dot {
+                    width: 14px;
+                    height: 14px;
+                    background: #2196F3;
+                    border: 2px solid white;
+                    border-radius: 50%;
+                    box-shadow: 0 0 10px rgba(33, 150, 243, 0.8);
+                }
+                
+                .car-marker {
+                    background: white;
+                    border-radius: 50%;
+                    width: 24px;
+                    height: 24px;
+                    display: flex;
+                    align-items: center;
+                    justify-content: center;
+                    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
+                    border: 2px solid #ddd;
+                }
+                .car-marker i {
+                    color: #555;
+                    font-size: 12px;
+                }
+            </style>
+            
+            <div style="position: relative;">
+                <div id="map" class="map-placeholder" style="overflow: hidden; position: relative; height: 280px; z-index: 1;"></div>
+                
+                <!-- Floating "De dónde" label to match photo -->
+                <div style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 2; background: rgba(30,30,30,0.9); border-radius: 12px; padding: 6px 16px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
+                    <span style="font-size: 0.7rem; color: #aaa;">De dónde</span>
+                    <span style="font-weight: 600; font-size: 0.9rem; color: white;">Universidad Nacional de Piura <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-left: 5px;"></i></span>
+                </div>
             </div>
-            <div class="stat-card">
-                <i class="fas fa-star"></i>
-                <div class="number">0</div>
-                <div class="label">Calificación</div>
+
+            <script>
+                function initMap() {
+                    const piura = [-5.180252, -80.629471];
+                    const map = L.map('map', {
+                        zoomControl: false,
+                        attributionControl: false
+                    }).setView(piura, 16);
+
+                    // CartoDB Dark Matter (Matches screenshot dark theme perfectly)
+                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                        maxZoom: 19
+                    }).addTo(map);
+                    
+                    // Custom User Marker (replicates screenshot exactly)
+                    const userIcon = L.divIcon({
+                        className: 'custom-user-marker-container',
+                        html: `
+                            <div class="custom-user-marker">
+                                <div class="icon-box"><i class="fas fa-person"></i></div>
+                                <div class="line"></div>
+                                <div class="dot"></div>
+                            </div>
+                        `,
+                        iconSize: [32, 60],
+                        iconAnchor: [16, 60]
+                    });
+
+                    L.marker(piura, {icon: userIcon}).addTo(map);
+
+                    // Add some fake nearby cars to make it look realistic like inDrive
+                    const carIcon = L.divIcon({
+                        className: 'car-marker-container',
+                        html: `<div class="car-marker"><i class="fas fa-car"></i></div>`,
+                        iconSize: [24, 24],
+                        iconAnchor: [12, 12]
+                    });
+
+                    L.marker([-5.181252, -80.631471], {icon: carIcon}).addTo(map);
+                    L.marker([-5.178252, -80.627471], {icon: carIcon}).addTo(map);
+                    L.marker([-5.179000, -80.630000], {icon: carIcon}).addTo(map);
+                }
+                
+                window.addEventListener('load', initMap);
+            </script>
+
+            <a href="/pasajero/destino" class="btn-primary mb-4">
+                <i class="fas fa-search"></i> Ingresar Destino
+            </a>
+
+            <div class="ride-options">
+                <a href="/pasajero/historial" class="ride-option">
+                    <i class="fas fa-history"></i>
+                    <span>Mis Viajes</span>
+                </a>
+                <a href="/pasajero/pago" class="ride-option">
+                    <i class="fas fa-wallet"></i>
+                    <span>Pagos</span>
+                </a>
             </div>
-            <div class="stat-card">
-                <i class="fas fa-clock"></i>
-                <div class="number">0</div>
-                <div class="label">Horas de Viaje</div>
+
+            <div class="stats-row">
+                <div class="stat-box">
+                    <div class="num" th:text="${viajesCompletados}">0</div>
+                    <div class="label">Viajes Completados</div>
+                </div>
+                <div class="stat-box">
+                    <div class="num">5.0 <i class="fas fa-star" style="font-size: 0.7rem;"></i></div>
+                    <div class="label">Calificación</div>
+                </div>
             </div>
         </div>
 
-        <div class="quick-actions">
-            <a href="/pasajero/historial" class="action-card">
-                <i class="fas fa-history"></i>
-                <h3>Historial</h3>
-                <p>Ver tus viajes anteriores</p>
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/pasajero/dashboard" class="nav-item active">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
             </a>
-            <a href="/pasajero/calificacion" class="action-card">
-                <i class="fas fa-star"></i>
-                <h3>Calificaciones</h3>
-                <p>Ver tus calificaciones</p>
+            <a href="/pasajero/historial" class="nav-item">
+                <i class="fas fa-car"></i>
+                <span>Viajes</span>
             </a>
-            <a href="/pasajero/pago" class="action-card">
+            <a href="/pasajero/pago" class="nav-item">
                 <i class="fas fa-credit-card"></i>
-                <h3>Métodos de Pago</h3>
-                <p>Gestiona tus pagos</p>
+                <span>Billetera</span>
             </a>
-        </div>
+            <a href="/pasajero/perfil" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
     </div>
 </body>
 </html>

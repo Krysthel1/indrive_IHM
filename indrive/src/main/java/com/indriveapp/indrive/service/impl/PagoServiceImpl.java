@@ -1,11 +1,11 @@
-package com.indriveapp.service.impl;
+package com.indriveapp.indrive.service.impl;
 
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.indriveapp.model.Pago;
-import com.indriveapp.repository.PagoRepository;
-import com.indriveapp.service.PagoService;
+import com.indriveapp.indrive.model.Pago;
+import com.indriveapp.indrive.repository.PagoRepository;
+import com.indriveapp.indrive.service.PagoService;
 
 @Service
 public class PagoServiceImpl implements PagoService {

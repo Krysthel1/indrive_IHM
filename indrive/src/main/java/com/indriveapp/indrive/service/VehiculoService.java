@@ -1,6 +1,6 @@
-package com.indriveapp.service;
+package com.indriveapp.indrive.service;
 
-import com.indriveapp.model.Vehiculo;
+import com.indriveapp.indrive.model.Vehiculo;
 
 public interface VehiculoService {
     Vehiculo guardar(Vehiculo vehiculo);

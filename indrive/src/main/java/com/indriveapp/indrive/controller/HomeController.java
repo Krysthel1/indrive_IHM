@@ -1,4 +1,4 @@
-package com.indriveapp.controller;
+package com.indriveapp.indrive.controller;
 
 import org.springframework.stereotype.Controller;
 import org.springframework.web.bind.annotation.GetMapping;
