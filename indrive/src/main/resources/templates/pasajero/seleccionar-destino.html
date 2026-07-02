@@ -1,0 +1,267 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Seleccionar Destino - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <!-- Leaflet JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .map-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(18,18,18,0.2) 0%, rgba(18,18,18,0.8) 50%, rgba(18,18,18,1) 100%);
+            z-index: 1;
+        }
+
+        .app-bar {
+            background: transparent;
+            border-bottom: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-surface);
+            border-radius: 30px 30px 0 0;
+            padding: 2rem 1.5rem;
+            z-index: 2;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            animation: slideUpSheet 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+        }
+
+        @keyframes slideUpSheet {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .location-input-group {
+            position: relative;
+            margin-bottom: 1.5rem;
+        }
+
+        .location-line {
+            position: absolute;
+            left: 23px;
+            top: 30px;
+            bottom: 30px;
+            width: 2px;
+            background: rgba(255,255,255,0.1);
+            z-index: 1;
+        }
+
+        .input-wrapper.origin i { color: var(--info); }
+        .input-wrapper.destination i { color: var(--primary); }
+
+        .saved-places {
+            display: flex;
+            gap: 1rem;
+            overflow-x: auto;
+            padding-bottom: 1rem;
+            margin-bottom: 1rem;
+            -ms-overflow-style: none;  /* IE and Edge */
+            scrollbar-width: none;  /* Firefox */
+        }
+        
+        .saved-places::-webkit-scrollbar {
+            display: none;
+        }
+
+        .place-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            white-space: nowrap;
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+
+        .place-chip i {
+            color: var(--text-main);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="padding-bottom: 0;">
+        <div id="map" style="position: absolute; top:0; left:0; width:100%; height:100vh; z-index:0; opacity: 0.8;"></div>
+        <div class="map-overlay" style="pointer-events: none;"></div>
+
+        <!-- App Bar -->
+        <div class="app-bar">
+            <a href="/pasajero/dashboard" class="app-bar-btn" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 10;">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Bottom Sheet -->
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            <h2 class="mb-3">¿A dónde quieres ir?</h2>
+
+            <div class="saved-places">
+                <div class="place-chip" style="cursor: pointer;" onclick="document.getElementById('destino').value='Open Plaza Piura'"><i class="fas fa-home"></i> Open Plaza</div>
+                <div class="place-chip" style="cursor: pointer;" onclick="document.getElementById('destino').value='Plaza de Armas Piura'"><i class="fas fa-star"></i> Plaza Armas</div>
+                <div class="place-chip" style="cursor: pointer;" onclick="document.getElementById('destino').value='Real Plaza Piura'"><i class="fas fa-briefcase"></i> Real Plaza</div>
+            </div>
+
+            <form action="/pasajero/precio" method="get">
+                <div class="location-input-group">
+                    <div class="location-line"></div>
+                    <div class="input-group mb-2">
+                        <div class="input-wrapper origin">
+                            <i class="fas fa-dot-circle"></i>
+                            <input type="text" id="origen" name="origen" placeholder="Ubicación actual" value="Universidad Nacional de Piura" required>
+                        </div>
+                    </div>
+                    
+                    <div class="input-group mb-0">
+                        <div class="input-wrapper destination">
+                            <i class="fas fa-map-marker-alt"></i>
+                            <input type="text" id="destino" name="destino" placeholder="Buscar destino" required>
+                        </div>
+                    </div>
+                </div>
+                
+                <button type="submit" class="btn-primary mt-4">
+                    <i class="fas fa-arrow-right"></i> Siguiente
+                </button>
+            </form>
+        </div>
+    </div>
+    <script>
+        let map;
+        let destMarker;
+        let debounceTimer;
+
+        function initMap() {
+            const piura = [-5.180252, -80.629471]; // UNP
+            
+            map = L.map('map', {
+                zoomControl: false,
+                attributionControl: false
+            }).setView(piura, 14);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(map);
+
+            // Origin Marker Custom UI
+            const originIcon = L.divIcon({
+                className: 'custom-origin',
+                html: `<div style="width:16px;height:16px;background:#0A84FF;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(10,132,255,0.8);"></div>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+            L.marker(piura, {icon: originIcon}).addTo(map);
+
+            // Destination Marker Custom UI
+            const destIcon = L.divIcon({
+                className: 'custom-dest',
+                html: `<div style="width:16px;height:16px;background:#FF6D00;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(255,109,0,0.8);"></div>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+
+            // Map click listener for reverse geocoding
+            map.on('click', (e) => {
+                const coords = e.latlng;
+                
+                if (!destMarker) {
+                    destMarker = L.marker(coords, {icon: destIcon}).addTo(map);
+                } else {
+                    destMarker.setLatLng(coords);
+                }
+                
+                const destInput = document.getElementById('destino');
+                destInput.value = 'Buscando dirección...';
+                
+                // Reverse geocoding with Nominatim
+                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=18&addressdetails=1`)
+                    .then(res => res.json())
+                    .then(data => {
+                        if (data && data.display_name) {
+                            let address = data.display_name.split(',')[0];
+                            if(data.address && data.address.road) {
+                                address = data.address.road;
+                                if(data.address.house_number) address += " " + data.address.house_number;
+                            }
+                            destInput.value = address;
+                        } else {
+                            destInput.value = "Ubicación seleccionada";
+                        }
+                    })
+                    .catch((err) => {
+                        console.error("Geocoder failed due to: " + err);
+                        destInput.value = coords.lat.toFixed(5) + ", " + coords.lng.toFixed(5);
+                    });
+            });
+            
+            // Forward Geocoding on Input (Nominatim)
+            const input = document.getElementById('destino');
+            input.addEventListener('input', function() {
+                clearTimeout(debounceTimer);
+                const query = this.value;
+                if(query.length < 4) return;
+                
+                debounceTimer = setTimeout(() => {
+                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Piura')}&limit=1`)
+                        .then(res => res.json())
+                        .then(data => {
+                            if (data && data.length > 0) {
+                                const lat = parseFloat(data[0].lat);
+                                const lon = parseFloat(data[0].lon);
+                                const coords = [lat, lon];
+                                
+                                map.setView(coords, 16);
+                                if (!destMarker) {
+                                    destMarker = L.marker(coords, {icon: destIcon}).addTo(map);
+                                } else {
+                                    destMarker.setLatLng(coords);
+                                }
+                            }
+                        });
+                }, 1000);
+            });
+        }
+
+        window.addEventListener('load', initMap);
+    </script>
+</body>
+</html>

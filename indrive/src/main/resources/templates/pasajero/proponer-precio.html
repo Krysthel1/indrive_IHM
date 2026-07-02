@@ -1,0 +1,291 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Proponer Precio - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <!-- Leaflet JS -->
+    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
+    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
+    <style>
+        .map-bg {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
+            z-index: 0;
+            opacity: 0.5;
+        }
+
+        .map-overlay {
+            position: absolute;
+            top: 0;
+            left: 0;
+            width: 100%;
+            height: 100vh;
+            background: linear-gradient(180deg, rgba(18,18,18,0.2) 0%, rgba(18,18,18,0.8) 50%, rgba(18,18,18,1) 100%);
+            z-index: 1;
+        }
+
+        .app-bar {
+            background: transparent;
+            border-bottom: none;
+            backdrop-filter: none;
+            -webkit-backdrop-filter: none;
+        }
+
+        .bottom-sheet {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            width: 100%;
+            background: var(--bg-surface);
+            border-radius: 30px 30px 0 0;
+            padding: 2rem 1.5rem;
+            z-index: 2;
+            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            animation: slideUpSheet 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+            border: 1px solid var(--glass-border);
+            border-bottom: none;
+        }
+
+        @keyframes slideUpSheet {
+            from { transform: translateY(100%); }
+            to { transform: translateY(0); }
+        }
+
+        .sheet-handle {
+            width: 40px;
+            height: 5px;
+            background: rgba(255,255,255,0.2);
+            border-radius: 5px;
+            margin: 0 auto 1.5rem auto;
+        }
+
+        .price-input-wrapper {
+            position: relative;
+            margin-bottom: 2rem;
+            text-align: center;
+        }
+
+        .price-currency {
+            position: absolute;
+            left: 20px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 1.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .price-input {
+            width: 100%;
+            background: rgba(255,255,255,0.05);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 1.5rem 1.5rem 1.5rem 3.5rem;
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: var(--text-main);
+            text-align: center;
+            font-family: 'Poppins', sans-serif;
+            transition: all 0.3s;
+        }
+
+        .price-input:focus {
+            outline: none;
+            box-shadow: 0 0 0 4px rgba(230, 81, 0, 0.2);
+        }
+
+        .price-suggestions {
+            display: flex;
+            justify-content: center;
+            gap: 10px;
+            margin-bottom: 1.5rem;
+        }
+
+        .price-chip {
+            background: rgba(255,255,255,0.05);
+            border: 1px solid var(--glass-border);
+            padding: 8px 16px;
+            border-radius: 20px;
+            font-weight: 600;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .price-chip:active {
+            background: var(--primary);
+            color: white;
+            border-color: var(--primary);
+        }
+
+        .route-summary {
+            background: rgba(255,255,255,0.02);
+            border-radius: 12px;
+            padding: 1rem;
+            margin-bottom: 1.5rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .route-summary-text {
+            font-size: 0.85rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container" style="padding-bottom: 0;">
+        <div id="map" style="position: absolute; top:0; left:0; width:100%; height:100vh; z-index:0; opacity: 0.8;"></div>
+        <div class="map-overlay" style="pointer-events: none;"></div>
+
+        <!-- App Bar -->
+        <div class="app-bar">
+            <a href="/pasajero/destino" class="app-bar-btn" style="background: rgba(0,0,0,0.5); backdrop-filter: blur(10px); z-index: 10;">
+                <i class="fas fa-arrow-left"></i>
+            </a>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Bottom Sheet -->
+        <div class="bottom-sheet">
+            <div class="sheet-handle"></div>
+            
+            <div class="route-summary" style="margin-bottom: 1rem;">
+                <div class="route-summary-text" style="color: var(--text-main); font-size: 0.85rem; flex: 1;">
+                    <div style="margin-bottom: 4px;"><i class="fas fa-dot-circle" style="color: var(--info); width: 16px;"></i> <span th:text="${origen}">Origen</span></div>
+                    <div><i class="fas fa-map-marker-alt" style="color: var(--primary); width: 16px;"></i> <span th:text="${destino}">Destino</span></div>
+                </div>
+                <div id="routeMeta" style="background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 12px; border: 1px solid var(--glass-border); font-size: 0.8rem; text-align: right; min-width: 90px;">
+                    <div style="font-weight: 700; color: var(--primary);" id="metaDist">... km</div>
+                    <div style="font-size: 0.7rem; color: var(--text-muted);" id="metaTime">... min</div>
+                </div>
+            </div>
+
+            <h2 class="mb-3 text-center" style="font-size: 1.3rem;">Ofrece tu tarifa</h2>
+
+            <form action="/viaje/guardar" method="post">
+                <input type="hidden" name="origen" th:value="${origen}">
+                <input type="hidden" name="destino" th:value="${destino}">
+                <input type="hidden" name="distancia" id="distanciaInput" value="0.0">
+                <input type="hidden" name="duracion" id="duracionInput" value="0">
+
+                <div class="price-input-wrapper" style="margin-bottom: 1.2rem;">
+                    <span class="price-currency">S/</span>
+                    <input type="number" name="precioPropuesto" class="price-input" placeholder="10.00" value="10.00" step="0.5" id="priceInput" required autofocus>
+                </div>
+
+                <div class="price-suggestions" style="margin-bottom: 1.2rem;">
+                    <div class="price-chip" onclick="setPrice(8)">S/ 8</div>
+                    <div class="price-chip" onclick="setPrice(10)">S/ 10</div>
+                    <div class="price-chip" onclick="setPrice(12)">S/ 12</div>
+                    <div class="price-chip" onclick="setPrice(15)">S/ 15</div>
+                </div>
+
+                <button type="submit" class="btn-primary mt-2">
+                    Buscar Conductores
+                </button>
+            </form>
+        </div>
+    </div>
+
+    <script th:inline="javascript">
+        function setPrice(val) {
+            document.getElementById('priceInput').value = val.toFixed(2);
+        }
+
+        // Leaflet logic
+        let map;
+
+        function getCoordinates(address) {
+            return fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Piura')}&limit=1`)
+                .then(res => res.json())
+                .then(data => {
+                    if (data && data.length > 0) {
+                        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
+                    }
+                    return [-5.180252, -80.629471]; // Fallback to Piura
+                });
+        }
+
+        async function initMap() {
+            const piura = [-5.180252, -80.629471];
+            map = L.map('map', { zoomControl: false, attributionControl: false }).setView(piura, 13);
+
+            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
+                maxZoom: 19
+            }).addTo(map);
+
+            const origenText = [[${origen}]];
+            const destinoText = [[${destino}]];
+
+            const originCoords = await getCoordinates(origenText);
+            const destCoords = await getCoordinates(destinoText);
+
+            // Origin Marker Custom UI
+            const originIcon = L.divIcon({
+                className: 'custom-origin',
+                html: `<div style="width:16px;height:16px;background:#0A84FF;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(10,132,255,0.8);"></div>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+            L.marker(originCoords, {icon: originIcon}).addTo(map);
+
+            // Destination Marker Custom UI
+            const destIcon = L.divIcon({
+                className: 'custom-dest',
+                html: `<div style="width:16px;height:16px;background:#FF6D00;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(255,109,0,0.8);"></div>`,
+                iconSize: [22, 22],
+                iconAnchor: [11, 11]
+            });
+            L.marker(destCoords, {icon: destIcon}).addTo(map);
+
+            // Fit bounds
+            const bounds = L.latLngBounds(originCoords, destCoords);
+            map.fitBounds(bounds, { padding: [50, 50] });
+
+            // OSRM Routing
+            fetch(`https://router.project-osrm.org/route/v1/driving/${originCoords[1]},${originCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`)
+                .then(res => res.json())
+                .then(data => {
+                    if(data.routes && data.routes.length > 0) {
+                        const route = data.routes[0];
+                        const distanceKm = (route.distance / 1000).toFixed(1);
+                        const durationMin = Math.round(route.duration / 60);
+
+                        document.getElementById('metaDist').innerText = distanceKm + ' km';
+                        document.getElementById('metaTime').innerText = durationMin + ' min';
+
+                        document.getElementById('distanciaInput').value = distanceKm;
+                        document.getElementById('duracionInput').value = durationMin;
+
+                        // Draw Route
+                        const routeCoords = route.geometry.coordinates.map(c => [c[1], c[0]]);
+                        L.polyline(routeCoords, {
+                            color: '#FF6D00',
+                            weight: 5,
+                            opacity: 0.8
+                        }).addTo(map);
+                    } else {
+                        document.getElementById('metaDist').innerText = '-- km';
+                        document.getElementById('metaTime').innerText = '-- min';
+                    }
+                })
+                .catch(err => {
+                    console.error("OSRM Routing failed", err);
+                    document.getElementById('metaDist').innerText = '-- km';
+                    document.getElementById('metaTime').innerText = '-- min';
+                });
+        }
+
+        window.addEventListener('load', initMap);
+    </script>
+</body>
+</html>
