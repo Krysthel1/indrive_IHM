@@ -1,0 +1,121 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Calificar Viaje - inDrive</title>
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            min-height: 100vh;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+        }
+        .container {
+            background: white;
+            padding: 2rem;
+            border-radius: 10px;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.2);
+            width: 100%;
+            max-width: 500px;
+        }
+        h1 {
+            color: #FF6600;
+            margin-bottom: 1.5rem;
+            text-align: center;
+        }
+        .form-group {
+            margin-bottom: 1rem;
+        }
+        label {
+            display: block;
+            margin-bottom: 0.5rem;
+            color: #333;
+            font-weight: bold;
+        }
+        input[type="number"],
+        textarea {
+            width: 100%;
+            padding: 0.75rem;
+            border: 1px solid #ddd;
+            border-radius: 5px;
+            font-size: 1rem;
+        }
+        textarea {
+            resize: vertical;
+            min-height: 100px;
+        }
+        .rating {
+            display: flex;
+            gap: 0.5rem;
+            margin-top: 0.5rem;
+        }
+        .rating input[type="radio"] {
+            display: none;
+        }
+        .rating label {
+            font-size: 2rem;
+            cursor: pointer;
+            color: #ddd;
+        }
+        .rating input[type="radio"]:checked ~ label,
+        .rating label:hover,
+        .rating label:hover ~ label {
+            color: #FF6600;
+        }
+        .btn {
+            width: 100%;
+            padding: 1rem;
+            background-color: #FF6600;
+            color: white;
+            border: none;
+            border-radius: 5px;
+            font-size: 1rem;
+            font-weight: bold;
+            cursor: pointer;
+            transition: background-color 0.3s;
+        }
+        .btn:hover {
+            background-color: #CC5200;
+        }
+    </style>
+</head>
+<body>
+    <div class="container">
+        <h1>Calificar tu viaje</h1>
+        <form action="/calificacion/guardar" method="post">
+            <input type="hidden" name="viajeId" th:value="${viajeId}">
+            
+            <div class="form-group">
+                <label>Puntuación:</label>
+                <div class="rating">
+                    <input type="radio" name="puntuacion" value="5" id="star5">
+                    <label for="star5">★</label>
+                    <input type="radio" name="puntuacion" value="4" id="star4">
+                    <label for="star4">★</label>
+                    <input type="radio" name="puntuacion" value="3" id="star3">
+                    <label for="star3">★</label>
+                    <input type="radio" name="puntuacion" value="2" id="star2">
+                    <label for="star2">★</label>
+                    <input type="radio" name="puntuacion" value="1" id="star1">
+                    <label for="star1">★</label>
+                </div>
+            </div>
+            
+            <div class="form-group">
+                <label for="comentario">Comentario (opcional):</label>
+                <textarea name="comentario" id="comentario" placeholder="Escribe tu experiencia..."></textarea>
+            </div>
+            
+            <button type="submit" class="btn">Enviar Calificación</button>
+        </form>
+    </div>
+</body>
+</html>

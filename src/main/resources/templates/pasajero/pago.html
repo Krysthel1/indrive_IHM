@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Pagar Viaje - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .payment-box {
+            background: var(--bg-surface);
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            border: 1px solid var(--glass-border);
+            text-align: center;
+            margin-top: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
+        }
+
+        .payment-amount {
+            font-size: 3rem;
+            font-weight: 800;
+            color: var(--success);
+            margin: 1.5rem 0;
+            letter-spacing: -1px;
+        }
+
+        .payment-methods {
+            display: flex;
+            flex-direction: column;
+            gap: 12px;
+            margin: 1.5rem 0 2rem 0;
+            text-align: left;
+        }
+
+        .method-option {
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            padding: 1rem 1.2rem;
+            background: rgba(255, 255, 255, 0.03);
+            border: 1px solid var(--glass-border);
+            border-radius: 14px;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+
+        .method-option.selected {
+            border-color: var(--primary);
+            background: rgba(230, 81, 0, 0.05);
+        }
+
+        .method-details {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .method-details i {
+            font-size: 1.25rem;
+            color: var(--primary);
+            width: 24px;
+            text-align: center;
+        }
+
+        .method-name {
+            font-weight: 500;
+            font-size: 0.95rem;
+        }
+
+        .checkbox-custom {
+            width: 20px;
+            height: 20px;
+            border-radius: 50%;
+            border: 2px solid var(--text-muted);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+        }
+
+        .method-option.selected .checkbox-custom {
+            border-color: var(--primary);
+            background: var(--primary);
+        }
+
+        .method-option.selected .checkbox-custom::after {
+            content: "";
+            width: 8px;
+            height: 8px;
+            background: white;
+            border-radius: 50%;
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <div style="width: 40px;"></div>
+            <h1 class="app-bar-title">Pago de Viaje</h1>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content">
+            <div class="payment-box">
+                <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success);"></i>
+                <h2 class="mt-4" style="font-size: 1.5rem; font-weight: 600;">¡Has llegado a tu destino!</h2>
+                <p class="text-muted">Por favor, realiza el pago al conductor.</p>
+
+                <div class="payment-amount">
+                    S/ <span th:text="${viaje.precioPropuesto}">12.00</span>
+                </div>
+
+                <div class="payment-methods">
+                    <div class="method-option selected" onclick="selectMethod(this)">
+                        <div class="method-details">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span class="method-name">Efectivo</span>
+                        </div>
+                        <div class="checkbox-custom"></div>
+                    </div>
+                    <div class="method-option" onclick="selectMethod(this)">
+                        <div class="method-details">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span class="method-name">Yape / Plin</span>
+                        </div>
+                        <div class="checkbox-custom"></div>
+                    </div>
+                    <div class="method-option" onclick="selectMethod(this)">
+                        <div class="method-details">
+                            <i class="fas fa-credit-card"></i>
+                            <span class="method-name">Tarjeta de Crédito / Débito</span>
+                        </div>
+                        <div class="checkbox-custom"></div>
+                    </div>
+                </div>
+
+                <a href="/pasajero/calificacion" class="btn-primary">
+                    <i class="fas fa-wallet"></i> Confirmar Pago
+                </a>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function selectMethod(el) {
+            document.querySelectorAll('.method-option').forEach(opt => opt.classList.remove('selected'));
+            el.classList.add('selected');
+        }
+    </script>
+</body>
+</html>

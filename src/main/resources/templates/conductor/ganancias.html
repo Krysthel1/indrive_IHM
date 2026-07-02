@@ -1,0 +1,228 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Ganancias - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .earnings-header {
+            background: linear-gradient(135deg, #2196F3 0%, #1565C0 100%);
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
+            text-align: center;
+            margin-bottom: 1.5rem;
+            box-shadow: 0 10px 30px rgba(33, 150, 243, 0.35);
+            animation: slideUpFade 0.5s ease-out;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .earnings-header::before {
+            content: "";
+            position: absolute;
+            top: -30px;
+            right: -30px;
+            width: 150px;
+            height: 150px;
+            background: rgba(255,255,255,0.05);
+            border-radius: 50%;
+        }
+
+        .earnings-main-amount {
+            font-size: 3.5rem;
+            font-weight: 800;
+            color: white;
+            letter-spacing: -2px;
+            margin: 0.5rem 0;
+        }
+
+        .earnings-sublabel {
+            font-size: 0.85rem;
+            opacity: 0.85;
+            color: white;
+        }
+
+        .stats-grid {
+            display: grid;
+            grid-template-columns: 1fr 1fr;
+            gap: 12px;
+            margin-bottom: 1.5rem;
+        }
+
+        .stat-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 18px;
+            padding: 1.2rem;
+            text-align: center;
+            animation: slideUpFade 0.5s ease-out 0.1s both;
+        }
+
+        .stat-card .icon {
+            font-size: 1.5rem;
+            margin-bottom: 8px;
+        }
+
+        .stat-card .value {
+            font-size: 1.4rem;
+            font-weight: 700;
+            color: var(--text-main);
+        }
+
+        .stat-card .label {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+            margin-top: 2px;
+        }
+
+        .recent-title {
+            font-size: 1rem;
+            font-weight: 600;
+            margin-bottom: 1rem;
+            color: var(--text-main);
+        }
+
+        .history-list {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            animation: slideUpFade 0.5s ease-out 0.2s both;
+        }
+
+        .history-card {
+            background: var(--bg-surface);
+            border: 1px solid var(--glass-border);
+            border-radius: 16px;
+            padding: 1rem 1.2rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+        }
+
+        .trip-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .trip-icon {
+            width: 40px;
+            height: 40px;
+            border-radius: 50%;
+            background: rgba(33, 150, 243, 0.1);
+            border: 1px solid rgba(33, 150, 243, 0.3);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--info);
+            font-size: 1rem;
+        }
+
+        .trip-details {
+            display: flex;
+            flex-direction: column;
+        }
+
+        .trip-destination {
+            font-size: 0.9rem;
+            font-weight: 500;
+        }
+
+        .trip-date {
+            font-size: 0.75rem;
+            color: var(--text-muted);
+        }
+
+        .trip-price {
+            font-weight: 700;
+            color: var(--success);
+            font-size: 1rem;
+        }
+
+        .empty-state {
+            text-align: center;
+            padding: 3rem 2rem;
+            color: var(--text-muted);
+        }
+    </style>
+</head>
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <h1 class="app-bar-title">Ganancias</h1>
+            <div style="width: 40px;"></div>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content">
+            <!-- Total Earnings Card -->
+            <div class="earnings-header">
+                <p class="earnings-sublabel">Ganancias Totales Acumuladas</p>
+                <div class="earnings-main-amount">S/ <span th:text="${gananciasTotales}">0.00</span></div>
+                <p class="earnings-sublabel">Desde que empezaste a conducir</p>
+            </div>
+
+            <!-- Stats Grid -->
+            <div class="stats-grid">
+                <div class="stat-card">
+                    <div class="icon" style="color: var(--primary);">🚗</div>
+                    <div class="value" th:text="${#lists.size(viajes)}">0</div>
+                    <div class="label">Viajes Totales</div>
+                </div>
+                <div class="stat-card">
+                    <div class="icon" style="color: var(--success);">✅</div>
+                    <div class="value" th:text="${#lists.size(viajes.?[estado == 'COMPLETADO'])}">0</div>
+                    <div class="label">Completados</div>
+                </div>
+            </div>
+
+            <!-- Recent Trips -->
+            <div class="recent-title">Viajes Recientes</div>
+
+            <div class="empty-state" th:if="${#lists.isEmpty(viajes)}">
+                <i class="fas fa-chart-line" style="font-size: 3rem; opacity: 0.3; margin-bottom: 1rem;"></i>
+                <p>Aún no tienes viajes registrados.</p>
+            </div>
+
+            <div class="history-list" th:unless="${#lists.isEmpty(viajes)}">
+                <div class="history-card" th:each="v : ${viajes}" th:if="${v.estado == 'COMPLETADO'}">
+                    <div class="trip-left">
+                        <div class="trip-icon">
+                            <i class="fas fa-route"></i>
+                        </div>
+                        <div class="trip-details">
+                            <span class="trip-destination" th:text="${v.destino}">Destino</span>
+                            <span class="trip-date" th:text="${#temporals.format(v.fecha, 'dd/MM/yyyy')}">16/06/2026</span>
+                        </div>
+                    </div>
+                    <div class="trip-price">+S/ <span th:text="${v.precioPropuesto}">12.00</span></div>
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/conductor/dashboard" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="/conductor/solicitudes" class="nav-item">
+                <i class="fas fa-list"></i>
+                <span>Solicitudes</span>
+            </a>
+            <a href="/conductor/ganancias" class="nav-item active">
+                <i class="fas fa-chart-line"></i>
+                <span>Ganancias</span>
+            </a>
+            <a href="/conductor/perfil" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+</body>
+</html>

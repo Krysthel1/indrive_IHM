@@ -1,0 +1,280 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Admin Dashboard - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <style>
+        * {
+            margin: 0;
+            padding: 0;
+            box-sizing: border-box;
+        }
+        body {
+            font-family: 'Poppins', sans-serif;
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            min-height: 100vh;
+        }
+        .navbar {
+            background: rgba(255, 255, 255, 0.95);
+            backdrop-filter: blur(10px);
+            padding: 1rem 2rem;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 2px 20px rgba(0,0,0,0.1);
+        }
+        .navbar-brand {
+            font-size: 1.8rem;
+            font-weight: 700;
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+            background-clip: text;
+        }
+        .nav-links {
+            display: flex;
+            gap: 1rem;
+        }
+        .nav-links a {
+            color: #FF6600;
+            text-decoration: none;
+            padding: 0.6rem 1.2rem;
+            border-radius: 25px;
+            font-weight: 500;
+            transition: all 0.3s ease;
+        }
+        .nav-links a:hover {
+            background: rgba(255, 102, 0, 0.1);
+            color: #CC5200;
+        }
+        .nav-links a.logout {
+            background: linear-gradient(135deg, #ff6b6b 0%, #ee5a5a 100%);
+            color: white;
+        }
+        .nav-links a.logout:hover {
+            background: linear-gradient(135deg, #ee5a5a 0%, #dc4444 100%);
+            color: white;
+        }
+        .container {
+            max-width: 1400px;
+            margin: 0 auto;
+            padding: 2rem;
+        }
+        .welcome-section {
+            background: white;
+            border-radius: 20px;
+            padding: 2.5rem;
+            margin-bottom: 2rem;
+            box-shadow: 0 20px 60px rgba(0,0,0,0.2);
+            animation: slideUp 0.6s ease-out;
+        }
+        @keyframes slideUp {
+            from { opacity: 0; transform: translateY(30px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .welcome-section h1 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 2rem;
+        }
+        .welcome-section p {
+            color: #666;
+            font-size: 1rem;
+        }
+        .dashboard-grid {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+            gap: 1.5rem;
+            margin-bottom: 2rem;
+        }
+        .stat-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+        }
+        .stat-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .stat-card .icon {
+            width: 60px;
+            height: 60px;
+            border-radius: 15px;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 1.5rem;
+            margin-bottom: 1rem;
+        }
+        .stat-card .icon.blue {
+            background: linear-gradient(135deg, #FF6600 0%, #CC5200 100%);
+            color: white;
+        }
+        .stat-card .icon.green {
+            background: linear-gradient(135deg, #4CAF50 0%, #45a049 100%);
+            color: white;
+        }
+        .stat-card .icon.orange {
+            background: linear-gradient(135deg, #ff9800 0%, #f57c00 100%);
+            color: white;
+        }
+        .stat-card .icon.purple {
+            background: linear-gradient(135deg, #9C27B0 0%, #7B1FA2 100%);
+            color: white;
+        }
+        .stat-card h3 {
+            color: #666;
+            font-size: 0.9rem;
+            margin-bottom: 0.5rem;
+        }
+        .stat-card .number {
+            font-size: 2.5rem;
+            font-weight: 700;
+            color: #333;
+        }
+        .stat-card .trend {
+            font-size: 0.85rem;
+            color: #4CAF50;
+            margin-top: 0.5rem;
+        }
+        .quick-actions {
+            display: grid;
+            grid-template-columns: repeat(auto-fit, minmax(250px, 1fr));
+            gap: 1.5rem;
+        }
+        .action-card {
+            background: white;
+            border-radius: 15px;
+            padding: 2rem;
+            text-align: center;
+            box-shadow: 0 10px 30px rgba(0,0,0,0.1);
+            transition: all 0.3s ease;
+            cursor: pointer;
+            text-decoration: none;
+            color: inherit;
+        }
+        .action-card:hover {
+            transform: translateY(-5px);
+            box-shadow: 0 15px 40px rgba(0,0,0,0.15);
+        }
+        .action-card i {
+            font-size: 2.5rem;
+            color: #FF6600;
+            margin-bottom: 1rem;
+        }
+        .action-card h3 {
+            color: #333;
+            margin-bottom: 0.5rem;
+            font-size: 1.1rem;
+        }
+        .action-card p {
+            color: #666;
+            font-size: 0.9rem;
+        }
+        @media (max-width: 768px) {
+            .navbar {
+                padding: 1rem;
+                flex-direction: column;
+                gap: 1rem;
+            }
+            .navbar-brand {
+                font-size: 1.5rem;
+            }
+            .nav-links {
+                flex-wrap: wrap;
+                justify-content: center;
+            }
+            .dashboard-grid {
+                grid-template-columns: 1fr;
+            }
+            .welcome-section h1 {
+                font-size: 1.5rem;
+            }
+        }
+    </style>
+</head>
+<body>
+    <nav class="navbar">
+        <span class="navbar-brand">inDrive Admin</span>
+        <div class="nav-links">
+            <a href="/admin/dashboard">Dashboard</a>
+            <a href="/admin/usuarios">Usuarios</a>
+            <a href="/admin/viajes">Viajes</a>
+            <a href="/auth/login" class="logout">
+                <i class="fas fa-sign-out-alt"></i> Salir
+            </a>
+        </div>
+    </nav>
+
+    <div class="container">
+        <div class="welcome-section">
+            <h1>Panel de Administración</h1>
+            <p>Bienvenido al centro de control de inDrive</p>
+        </div>
+
+        <div class="dashboard-grid">
+            <div class="stat-card">
+                <div class="icon blue">
+                    <i class="fas fa-users"></i>
+                </div>
+                <h3>Total Usuarios</h3>
+                <div class="number">0</div>
+                <div class="trend"><i class="fas fa-arrow-up"></i> +0% este mes</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon green">
+                    <i class="fas fa-route"></i>
+                </div>
+                <h3>Viajes Totales</h3>
+                <div class="number">0</div>
+                <div class="trend"><i class="fas fa-arrow-up"></i> +0% este mes</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon orange">
+                    <i class="fas fa-car"></i>
+                </div>
+                <h3>Conductores Activos</h3>
+                <div class="number">0</div>
+                <div class="trend"><i class="fas fa-arrow-up"></i> +0% este mes</div>
+            </div>
+            <div class="stat-card">
+                <div class="icon purple">
+                    <i class="fas fa-user"></i>
+                </div>
+                <h3>Pasajeros Activos</h3>
+                <div class="number">0</div>
+                <div class="trend"><i class="fas fa-arrow-up"></i> +0% este mes</div>
+            </div>
+        </div>
+
+        <div class="quick-actions">
+            <a href="/admin/usuarios" class="action-card">
+                <i class="fas fa-user-cog"></i>
+                <h3>Gestionar Usuarios</h3>
+                <p>Administrar cuentas y permisos</p>
+            </a>
+            <a href="/admin/viajes" class="action-card">
+                <i class="fas fa-map-marked-alt"></i>
+                <h3>Gestionar Viajes</h3>
+                <p>Ver y administrar viajes</p>
+            </a>
+            <a href="#" class="action-card">
+                <i class="fas fa-chart-line"></i>
+                <h3>Estadísticas</h3>
+                <p>Ver reportes y análisis</p>
+            </a>
+            <a href="#" class="action-card">
+                <i class="fas fa-cog"></i>
+                <h3>Configuración</h3>
+                <p>Ajustes del sistema</p>
+            </a>
+        </div>
+    </div>
+</body>
+</html>
