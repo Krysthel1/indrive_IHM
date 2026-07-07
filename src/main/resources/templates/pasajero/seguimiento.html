@@ -23,7 +23,7 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(180deg, rgba(18,18,18,0.2) 0%, rgba(18,18,18,0.7) 40%, rgba(18,18,18,1) 90%);
+            background: linear-gradient(180deg, rgba(247,249,252,0.1) 0%, rgba(247,249,252,0.7) 40%, rgba(247,249,252,1) 90%);
             z-index: 1;
             pointer-events: none;
         }
@@ -44,7 +44,7 @@
             border-radius: 30px 30px 0 0;
             padding: 1.5rem;
             z-index: 2;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 -10px 40px rgba(160,175,190,0.12);
             border: 1px solid var(--glass-border);
             border-bottom: none;
         }
@@ -52,7 +52,7 @@
         .sheet-handle {
             width: 40px;
             height: 5px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.1);
             border-radius: 5px;
             margin: 0 auto 1rem auto;
         }
@@ -61,11 +61,12 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(76, 175, 80, 0.1);
+            background: rgba(52, 199, 89, 0.15);
             border: 1px solid var(--success);
             padding: 0.8rem 1.2rem;
             border-radius: 14px;
             margin-bottom: 1.2rem;
+            color: #278A3E;
         }
 
         .status-dot {
@@ -77,20 +78,21 @@
         }
 
         @keyframes pulse-dot {
-            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0.7); }
-            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(76, 175, 80, 0); }
-            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(76, 175, 80, 0); }
+            0% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0.7); }
+            70% { transform: scale(1); box-shadow: 0 0 0 8px rgba(52, 199, 89, 0); }
+            100% { transform: scale(0.95); box-shadow: 0 0 0 0 rgba(52, 199, 89, 0); }
         }
 
         .driver-info-box {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(255,255,255,0.02);
-            border: 1px solid var(--glass-border);
+            background: #FFFFFF;
+            border: 1px solid #EEF2F6;
             padding: 1.2rem;
             border-radius: 16px;
             margin-bottom: 1.2rem;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
         }
 
         .driver-details {
@@ -120,6 +122,7 @@
         .driver-name {
             font-weight: 600;
             font-size: 1rem;
+            color: #1A1A1A;
         }
 
         .driver-rating {
@@ -150,12 +153,12 @@
             flex-direction: column;
             gap: 10px;
             font-size: 0.85rem;
-            color: var(--text-muted);
+            color: #4C5E70;
             margin-bottom: 1.5rem;
-            background: rgba(255,255,255,0.01);
+            background: #F4F6F9;
             border-radius: 12px;
             padding: 1rem;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid #EEF2F6;
         }
 
         .trip-detail-item {
