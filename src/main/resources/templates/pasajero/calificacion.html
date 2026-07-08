@@ -15,7 +15,7 @@
             border: 1px solid var(--glass-border);
             text-align: center;
             margin-top: 1.5rem;
-            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
+            box-shadow: 0 10px 30px rgba(160,175,190,0.12);
             animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
         }
 
@@ -28,7 +28,7 @@
         }
 
         .star-rating i {
-            color: rgba(255,255,255,0.1);
+            color: #E2E8F0;
             cursor: pointer;
             transition: color 0.2s, transform 0.2s;
         }
@@ -46,26 +46,27 @@
         }
 
         .tag-chip {
-            background: rgba(255, 255, 255, 0.03);
-            border: 1px solid var(--glass-border);
+            background: #F4F6F9;
+            border: 1px solid #EEF2F6;
             padding: 10px;
             border-radius: 12px;
             font-size: 0.85rem;
             cursor: pointer;
             transition: all 0.2s;
             text-align: center;
+            color: #4C5E70;
         }
 
         .tag-chip.selected {
             border-color: var(--primary);
-            background: rgba(230, 81, 0, 0.08);
-            color: var(--text-main);
+            background: rgba(255, 85, 0, 0.05);
+            color: #1A1A1A;
         }
 
         .comment-area {
             width: 100%;
-            background: rgba(255,255,255,0.03);
-            border: 1px solid var(--glass-border);
+            background: #F4F6F9;
+            border: 1px solid #EEF2F6;
             border-radius: 14px;
             padding: 12px;
             color: var(--text-main);
@@ -73,13 +74,14 @@
             font-size: 0.9rem;
             resize: none;
             margin-bottom: 1.5rem;
-            transition: border-color 0.3s;
+            transition: border-color 0.3s, background-color 0.3s;
         }
 
         .comment-area:focus {
             outline: none;
             border-color: var(--primary);
-            background: rgba(255,255,255,0.06);
+            background: #FFFFFF;
+            box-shadow: 0 4px 12px rgba(255, 85, 0, 0.05);
         }
     </style>
 </head>

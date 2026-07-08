@@ -1,146 +1,125 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Pasajero - inDrive</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/app.css}">
-    <style>
-        .map-placeholder {
-            background: linear-gradient(180deg, rgba(30,30,30,0) 0%, var(--bg-dark) 100%),
-                        url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
-            height: 250px;
-            border-radius: 20px;
-            margin-bottom: 1.5rem;
-            position: relative;
-            box-shadow: 0 4px 15px rgba(0,0,0,0.3);
-            border: 1px solid var(--glass-border);
-        }
-        
-        .map-pin {
-            position: absolute;
-            top: 50%;
-            left: 50%;
-            transform: translate(-50%, -50%);
-            color: var(--primary);
-            font-size: 2.5rem;
-            filter: drop-shadow(0 4px 6px rgba(0,0,0,0.5));
-            animation: bounce 2s infinite;
-        }
-
-        @keyframes bounce {
-            0%, 20%, 50%, 80%, 100% {transform: translate(-50%, -50%);}
-            40% {transform: translate(-50%, -60px);}
-            60% {transform: translate(-50%, -40px);}
-        }
-
-        .ride-options {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .ride-option {
-            background: var(--bg-surface);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1rem;
-            text-align: center;
-            transition: all 0.3s;
-            cursor: pointer;
-            text-decoration: none;
-            color: inherit;
-        }
-
-        .ride-option:active {
-            transform: scale(0.95);
-            background: rgba(255, 255, 255, 0.1);
-        }
-
-        .ride-option i {
-            font-size: 2rem;
-            color: var(--primary);
-            margin-bottom: 0.5rem;
-        }
-
-        .ride-option span {
-            display: block;
-            font-weight: 600;
-            font-size: 0.9rem;
-        }
-
-        .stats-row {
-            display: flex;
-            gap: 1rem;
-            margin-bottom: 1.5rem;
-        }
-
-        .stat-box {
-            flex: 1;
-            background: rgba(255, 255, 255, 0.05);
-            border-radius: 16px;
-            padding: 1rem;
-            text-align: center;
-            border: 1px solid var(--glass-border);
-        }
-
-        .stat-box .num {
-            font-size: 1.5rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-
-        .stat-box .label {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-        }
-    </style>
 </head>
+
 <body>
     <div class="app-container">
         <!-- App Bar -->
         <div class="app-bar">
-            <h1 class="app-bar-title">inDrive</h1>
-            <a href="/auth/login" class="app-bar-btn" title="Cerrar Sesión">
-                <i class="fas fa-sign-out-alt" style="color: var(--danger);"></i>
+            <h1 class="app-bar-title" style="font-size: 1.45rem; font-weight: 800;"><span
+                    class="brand-in">in</span><span class="brand-drive">Drive</span></h1>
+            <a href="/auth/login" class="app-bar-btn logout-btn-custom" title="Cerrar Sesión">
+                <i class="fas fa-sign-out-alt"></i>
             </a>
         </div>
 
         <!-- Main Content -->
         <div class="app-content animate-slide-up">
-            <h2 class="mb-1" style="font-size: 1.5rem;">Hola, <span th:text="${usuarioLogueado.nombres}">Pasajero</span></h2>
-            <p class="text-muted mb-3">¿A dónde vamos hoy?</p>
+            <h2 class="mb-1" style="font-size: 1.8rem; font-weight: 700; color: #1A1A1A;">Hola, <span
+                    th:text="${usuarioLogueado.nombres}">Pasajero</span> 👋</h2>
+            <p class="text-muted mb-3" style="font-size: 0.95rem;">¿A dónde vamos hoy?</p>
 
-            <div class="map-placeholder" style="overflow: hidden; position: relative;">
-                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <!-- Map Card Container -->
+            <div class="map-container-card">
+                <iframe
+                    src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe"
+                    width="100%" height="100%" style="border:0; filter: contrast(1.05) saturate(1.1);"
+                    allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+
+                <!-- Floating search overlay top-left -->
+                <a href="/pasajero/destino" class="map-floating-search" style="text-decoration: none;">
+                    <i class="fas fa-map-marker-alt" style="color: var(--primary); font-size: 1.1rem;"></i>
+                    <span>¿A dónde quieres ir?</span>
+                </a>
+
+                <!-- Route SVG paths drawing route over map -->
+                <svg viewBox="0 0 100 100" preserveAspectRatio="none"
+                    style="position: absolute; top:0; left:0; width:100%; height:100%; pointer-events:none; z-index: 5;">
+                    <path d="M 25 70 C 40 70, 55 55, 70 30" fill="none" stroke="var(--primary)" stroke-width="3"
+                        stroke-linecap="round" />
+                    <circle cx="25" cy="70" r="3" fill="white" stroke="var(--primary)" stroke-width="2">
+                        <animate attributeName="r" values="3;6;3" dur="2s" repeatCount="indefinite" />
+                    </circle>
+                    <circle cx="25" cy="70" r="7" fill="none" stroke="var(--primary)" stroke-width="1.5" opacity="0.6">
+                        <animate attributeName="r" values="5;11;5" dur="2s" repeatCount="indefinite" />
+                    </circle>
+                </svg>
+
+                <div style="position: absolute; top: 30%; left: 70%; transform: translate(-50%, -100%); z-index: 6;">
+                    <i class="fas fa-map-marker-alt"
+                        style="color: var(--primary); font-size: 1.6rem; filter: drop-shadow(0 2px 4px rgba(0,0,0,0.25));"></i>
+                </div>
+
+                <!-- Floating locate button bottom-right -->
+                <button class="map-locate-btn">
+                    <i class="fas fa-crosshairs"></i>
+                </button>
             </div>
 
-            <a href="/pasajero/destino" class="btn-primary mb-4">
-                <i class="fas fa-search"></i> Ingresar Destino
+            <!-- Main CTA Button -->
+            <a href="/pasajero/destino" class="btn-primary mb-4"
+                style="border-radius: 18px; font-weight: 700; text-decoration: none;">
+                <i class="fas fa-search" style="font-size: 1.1rem;"></i> Ingresar destino
             </a>
 
-            <div class="ride-options">
-                <a href="/pasajero/historial" class="ride-option">
-                    <i class="fas fa-history"></i>
-                    <span>Mis Viajes</span>
+            <!-- 2x2 Custom Grid Cards -->
+            <div class="dashboard-grid">
+                <!-- Mis Viajes -->
+                <a href="/pasajero/historial" class="dashboard-card-custom">
+                    <div class="card-icon-container">
+                        <i class="fas fa-history"></i>
+                    </div>
+                    <div class="card-text-container">
+                        <span class="card-title-custom">Mis Viajes</span>
+                        <span class="card-desc-custom">Historial de viajes realizados</span>
+                    </div>
+                    <i class="fas fa-chevron-right card-arrow-custom"></i>
                 </a>
-                <a href="/pasajero/pago" class="ride-option">
-                    <i class="fas fa-wallet"></i>
-                    <span>Pagos</span>
-                </a>
-            </div>
 
-            <div class="stats-row">
-                <div class="stat-box">
-                    <div class="num" th:text="${viajesCompletados}">0</div>
-                    <div class="label">Viajes Completados</div>
+                <!-- Pagos -->
+                <a href="/pago/" class="dashboard-card-custom">
+                    <div class="card-icon-container">
+                        <i class="fas fa-wallet"></i>
+                    </div>
+                    <div class="card-text-container">
+                        <span class="card-title-custom">Pagos</span>
+                        <span class="card-desc-custom">Métodos de pago y transacciones</span>
+                    </div>
+                    <i class="fas fa-chevron-right card-arrow-custom"></i>
+                </a>
+
+                <!-- Viajes Completados -->
+                <div class="dashboard-card-custom">
+                    <div class="card-icon-container">
+                        <span class="completed-number" th:text="${viajesCompletados}">0</span>
+                    </div>
+                    <div class="card-text-container">
+                        <span class="card-title-custom">Viajes Completados</span>
+                        <span class="card-desc-custom">Total de viajes finalizados</span>
+                    </div>
                 </div>
-                <div class="stat-box">
-                    <div class="num">5.0 <i class="fas fa-star" style="font-size: 0.7rem;"></i></div>
-                    <div class="label">Calificación</div>
+
+                <!-- Calificación -->
+                <div class="dashboard-card-custom">
+                    <div class="card-icon-container">
+                        <span class="rating-number">5.0</span>
+                        <span class="rating-star-badge">
+                            <i class="fas fa-star"></i>
+                        </span>
+                    </div>
+                    <div class="card-text-container">
+                        <span class="card-title-custom">Calificación</span>
+                        <span class="card-desc-custom">Tu calificación promedio</span>
+                    </div>
                 </div>
             </div>
         </div>
@@ -155,7 +134,7 @@
                 <i class="fas fa-car"></i>
                 <span>Viajes</span>
             </a>
-            <a href="/pasajero/pago" class="nav-item">
+            <a href="/pago/" class="nav-item">
                 <i class="fas fa-credit-card"></i>
                 <span>Billetera</span>
             </a>
@@ -166,4 +145,5 @@
         </nav>
     </div>
 </body>
+
 </html>

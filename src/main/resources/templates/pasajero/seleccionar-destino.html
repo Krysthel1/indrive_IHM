@@ -16,7 +16,7 @@
             height: 100vh;
             background: url('https://images.unsplash.com/photo-1524661135-423995f22d0b?ixlib=rb-4.0.3&auto=format&fit=crop&w=600&q=80') center/cover no-repeat;
             z-index: 0;
-            opacity: 0.5;
+            opacity: 0.8;
         }
 
         .map-overlay {
@@ -25,7 +25,7 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(180deg, rgba(18,18,18,0.2) 0%, rgba(18,18,18,0.8) 50%, rgba(18,18,18,1) 100%);
+            background: linear-gradient(180deg, rgba(247,249,252,0.1) 0%, rgba(247,249,252,0.7) 40%, rgba(247,249,252,1) 90%);
             z-index: 1;
         }
 
@@ -45,7 +45,7 @@
             border-radius: 30px 30px 0 0;
             padding: 2rem 1.5rem;
             z-index: 2;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 -10px 40px rgba(160,175,190,0.12);
             animation: slideUpSheet 0.5s cubic-bezier(0.16, 1, 0.3, 1);
             border: 1px solid var(--glass-border);
             border-bottom: none;
@@ -59,7 +59,7 @@
         .sheet-handle {
             width: 40px;
             height: 5px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(0,0,0,0.1);
             border-radius: 5px;
             margin: 0 auto 1.5rem auto;
         }
@@ -75,11 +75,11 @@
             top: 30px;
             bottom: 30px;
             width: 2px;
-            background: rgba(255,255,255,0.1);
+            background: #EEF2F6;
             z-index: 1;
         }
 
-        .input-wrapper.origin i { color: var(--info); }
+        .input-wrapper.origin i { color: #007AFF; }
         .input-wrapper.destination i { color: var(--primary); }
 
         .saved-places {
@@ -97,8 +97,8 @@
         }
 
         .place-chip {
-            background: rgba(255,255,255,0.05);
-            border: 1px solid var(--glass-border);
+            background: #F4F6F9;
+            border: 1px solid #EEF2F6;
             padding: 8px 16px;
             border-radius: 20px;
             display: flex;
@@ -106,11 +106,11 @@
             gap: 8px;
             white-space: nowrap;
             font-size: 0.85rem;
-            color: var(--text-muted);
+            color: #4C5E70;
         }
 
         .place-chip i {
-            color: var(--text-main);
+            color: var(--primary);
         }
     </style>
 </head>

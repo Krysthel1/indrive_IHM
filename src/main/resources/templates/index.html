@@ -15,7 +15,7 @@
             justify-content: space-between;
             align-items: center;
             padding: 3rem 2rem;
-            background: radial-gradient(circle at 50% 30%, #BF360C 0%, var(--bg-dark) 70%);
+            background: radial-gradient(circle at 50% 30%, #FFF0E6 0%, var(--bg-dark) 80%);
             position: relative;
             overflow: hidden;
         }
@@ -33,12 +33,12 @@
         .floating-circle {
             position: absolute;
             border-radius: 50%;
-            background: rgba(230, 81, 0, 0.1);
+            background: rgba(255, 85, 0, 0.04);
             filter: blur(40px);
         }
 
         .circle-1 { width: 300px; height: 300px; top: -100px; left: -100px; }
-        .circle-2 { width: 400px; height: 400px; bottom: 10%; right: -150px; background: rgba(255, 204, 128, 0.05); }
+        .circle-2 { width: 400px; height: 400px; bottom: 10%; right: -150px; background: rgba(255, 85, 0, 0.03); }
 
         .splash-content {
             z-index: 1;
@@ -48,9 +48,9 @@
         }
 
         .app-logo {
-            font-size: 4rem;
+            font-size: 4.5rem;
             font-weight: 800;
-            background: linear-gradient(135deg, #FFFFFF 0%, #ffcc80 100%);
+            background: linear-gradient(135deg, #FF6000 0%, #FF3D00 100%);
             -webkit-background-clip: text;
             -webkit-text-fill-color: transparent;
             background-clip: text;
@@ -59,9 +59,9 @@
         }
 
         .app-tagline {
-            font-size: 1.2rem;
-            color: rgba(255, 255, 255, 0.9);
-            font-weight: 500;
+            font-size: 1.25rem;
+            color: #4C5E70;
+            font-weight: 600;
         }
 
         .splash-actions {
@@ -75,11 +75,11 @@
         }
 
         .btn-outline {
-            background: transparent;
-            color: white;
-            border: 2px solid rgba(255, 255, 255, 0.3);
-            border-radius: 14px;
-            padding: 1rem;
+            background: #FFFFFF;
+            color: var(--primary);
+            border: 2px solid var(--primary);
+            border-radius: 16px;
+            padding: 1.1rem;
             font-size: 1.1rem;
             font-weight: 600;
             width: 100%;
@@ -90,11 +90,12 @@
             gap: 8px;
             text-decoration: none;
             transition: border-color 0.3s, background-color 0.3s;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.02);
         }
 
         .btn-outline:active {
-            background: rgba(255, 255, 255, 0.1);
-            border-color: rgba(255, 255, 255, 0.5);
+            background: rgba(255, 85, 0, 0.05);
+            border-color: var(--primary);
         }
     </style>
 </head>

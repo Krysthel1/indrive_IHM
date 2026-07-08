@@ -148,13 +148,13 @@ public class PasajeroController {
         Optional<Viaje> viajeOpt = viajeRepository.findTopByPasajeroIdPasajeroAndEstadoInOrderByIdViajeDesc(
                 pasajero.getIdPasajero(), Arrays.asList("ACEPTADO", "EN_CURSO", "COMPLETADO"));
 
-        if (viajeOpt.isEmpty()) {
-            return "redirect:/pasajero/dashboard";
-        }
-
-        Viaje viaje = viajeOpt.get();
         model.addAttribute("usuarioLogueado", usuario);
-        model.addAttribute("viaje", viaje);
+        if (viajeOpt.isPresent()) {
+            model.addAttribute("viaje", viajeOpt.get());
+            model.addAttribute("sinViaje", false);
+        } else {
+            model.addAttribute("sinViaje", true);
+        }
         return "pasajero/pago";
     }
 
