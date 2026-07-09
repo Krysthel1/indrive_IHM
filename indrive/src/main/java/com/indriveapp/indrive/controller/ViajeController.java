@@ -63,7 +63,7 @@ public class ViajeController {
     public String aceptarViaje(
             @PathVariable Integer viajeId,
             @PathVariable Integer conductorId) {
-        
+
         Viaje viaje = viajeService.buscarPorId(viajeId);
         Conductor conductor = conductorRepository.findById(conductorId).orElse(null);
         if (viaje != null && conductor != null) {
@@ -71,7 +71,7 @@ public class ViajeController {
             viaje.setEstado("ACEPTADO");
             viajeRepository.save(viaje);
         }
-        
+
         return "redirect:/conductor/viaje";
     }
 
@@ -91,10 +91,12 @@ public class ViajeController {
     @ResponseBody
     public List<Map<String, Object>> obtenerOfertas(HttpSession session) {
         Usuario usuario = (Usuario) session.getAttribute("usuarioLogueado");
-        if (usuario == null) return Collections.emptyList();
+        if (usuario == null)
+            return Collections.emptyList();
 
         Pasajero pasajero = pasajeroRepository.findByUsuarioIdUsuario(usuario.getIdUsuario()).orElse(null);
-        if (pasajero == null) return Collections.emptyList();
+        if (pasajero == null)
+            return Collections.emptyList();
 
         Optional<Viaje> viajeOpt = viajeRepository.findTopByPasajeroIdPasajeroAndEstadoInOrderByIdViajeDesc(
                 pasajero.getIdPasajero(), Arrays.asList("PENDIENTE"));
@@ -111,14 +113,17 @@ public class ViajeController {
             map.put("precio", o.getPrecio());
             map.put("tiempoLlegada", o.getTiempoLlegada());
             map.put("conductorId", o.getConductor().getIdConductor());
-            map.put("nombreConductor", o.getConductor().getUsuario().getNombres() + " " + o.getConductor().getUsuario().getApellidos());
+            map.put("nombreConductor",
+                    o.getConductor().getUsuario().getNombres() + " " + o.getConductor().getUsuario().getApellidos());
 
             // Buscar vehículo
             Vehiculo v = vehiculoRepository.findAll().stream()
-                    .filter(veh -> veh.getConductor() != null && veh.getConductor().getIdConductor().equals(o.getConductor().getIdConductor()))
+                    .filter(veh -> veh.getConductor() != null
+                            && veh.getConductor().getIdConductor().equals(o.getConductor().getIdConductor()))
                     .findFirst().orElse(null);
             if (v != null) {
-                map.put("vehiculo", v.getMarca() + " " + v.getModelo() + " • " + v.getColor() + " (" + v.getPlaca() + ")");
+                map.put("vehiculo",
+                        v.getMarca() + " " + v.getModelo() + " • " + v.getColor() + " (" + v.getPlaca() + ")");
             } else {
                 map.put("vehiculo", "Vehículo no registrado");
             }
@@ -129,7 +134,8 @@ public class ViajeController {
 
     @PostMapping("/api/aceptar-oferta")
     @ResponseBody
-    public Map<String, Object> aceptarOferta(@RequestParam Integer viajeId, @RequestParam Integer conductorId, @RequestParam Double precio) {
+    public Map<String, Object> aceptarOferta(@RequestParam Integer viajeId, @RequestParam Integer conductorId,
+            @RequestParam Double precio) {
         Map<String, Object> res = new HashMap<>();
         Viaje viaje = viajeRepository.findById(viajeId).orElse(null);
         Conductor conductor = conductorRepository.findById(conductorId).orElse(null);

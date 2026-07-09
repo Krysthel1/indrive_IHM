@@ -60,7 +60,7 @@ public class PasajeroController {
         if (usuario == null) {
             return "redirect:/auth/login";
         }
-        
+
         model.addAttribute("usuarioLogueado", usuario);
         model.addAttribute("viaje", new Viaje());
         return "pasajero/seleccionar-destino";
@@ -87,7 +87,8 @@ public class PasajeroController {
         }
 
         Pasajero pasajero = pasajeroRepository.findByUsuarioIdUsuario(usuario.getIdUsuario()).orElse(null);
-        if (pasajero == null) return "redirect:/auth/login";
+        if (pasajero == null)
+            return "redirect:/auth/login";
 
         // Buscar el viaje activo o pendiente del pasajero
         Optional<Viaje> viajeOpt = viajeRepository.findTopByPasajeroIdPasajeroAndEstadoInOrderByIdViajeDesc(
@@ -115,7 +116,8 @@ public class PasajeroController {
         }
 
         Pasajero pasajero = pasajeroRepository.findByUsuarioIdUsuario(usuario.getIdUsuario()).orElse(null);
-        if (pasajero == null) return "redirect:/auth/login";
+        if (pasajero == null)
+            return "redirect:/auth/login";
 
         Optional<Viaje> viajeOpt = viajeRepository.findTopByPasajeroIdPasajeroAndEstadoInOrderByIdViajeDesc(
                 pasajero.getIdPasajero(), Arrays.asList("ACEPTADO", "EN_CURSO"));
@@ -139,9 +141,11 @@ public class PasajeroController {
         }
 
         Pasajero pasajero = pasajeroRepository.findByUsuarioIdUsuario(usuario.getIdUsuario()).orElse(null);
-        if (pasajero == null) return "redirect:/auth/login";
+        if (pasajero == null)
+            return "redirect:/auth/login";
 
-        // Buscamos el último viaje del pasajero (incluso si está en proceso de pago/completado)
+        // Buscamos el último viaje del pasajero (incluso si está en proceso de
+        // pago/completado)
         Optional<Viaje> viajeOpt = viajeRepository.findTopByPasajeroIdPasajeroAndEstadoInOrderByIdViajeDesc(
                 pasajero.getIdPasajero(), Arrays.asList("ACEPTADO", "EN_CURSO", "COMPLETADO"));
 
@@ -198,7 +202,8 @@ public class PasajeroController {
         }
 
         Pasajero pasajero = pasajeroRepository.findByUsuarioIdUsuario(usuario.getIdUsuario()).orElse(null);
-        if (pasajero == null) return "redirect:/auth/login";
+        if (pasajero == null)
+            return "redirect:/auth/login";
 
         List<Viaje> viajes = viajeRepository.findByPasajeroIdPasajeroOrderByIdViajeDesc(pasajero.getIdPasajero());
         model.addAttribute("usuarioLogueado", usuario);

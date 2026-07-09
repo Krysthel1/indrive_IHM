@@ -1,10 +1,12 @@
 <!DOCTYPE html>
 <html xmlns:th="http://www.thymeleaf.org">
+
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
     <title>Viaje Actual - inDrive</title>
-    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <style>
@@ -23,7 +25,7 @@
             left: 0;
             width: 100%;
             height: 100vh;
-            background: linear-gradient(180deg, rgba(18,18,18,0.2) 0%, rgba(18,18,18,0.7) 40%, rgba(18,18,18,1) 90%);
+            background: linear-gradient(180deg, rgba(18, 18, 18, 0.2) 0%, rgba(18, 18, 18, 0.7) 40%, rgba(18, 18, 18, 1) 90%);
             z-index: 1;
             pointer-events: none;
         }
@@ -44,7 +46,7 @@
             border-radius: 30px 30px 0 0;
             padding: 1.5rem;
             z-index: 2;
-            box-shadow: 0 -10px 40px rgba(0,0,0,0.5);
+            box-shadow: 0 -10px 40px rgba(0, 0, 0, 0.5);
             border: 1px solid var(--glass-border);
             border-bottom: none;
         }
@@ -52,7 +54,7 @@
         .sheet-handle {
             width: 40px;
             height: 5px;
-            background: rgba(255,255,255,0.2);
+            background: rgba(255, 255, 255, 0.2);
             border-radius: 5px;
             margin: 0 auto 1rem auto;
         }
@@ -72,7 +74,7 @@
             display: flex;
             align-items: center;
             justify-content: space-between;
-            background: rgba(255,255,255,0.02);
+            background: rgba(255, 255, 255, 0.02);
             border: 1px solid var(--glass-border);
             padding: 1rem 1.2rem;
             border-radius: 16px;
@@ -133,10 +135,10 @@
             font-size: 0.85rem;
             color: var(--text-muted);
             margin-bottom: 1.5rem;
-            background: rgba(255,255,255,0.01);
+            background: rgba(255, 255, 255, 0.01);
             border-radius: 12px;
             padding: 1rem;
-            border: 1px solid rgba(255,255,255,0.03);
+            border: 1px solid rgba(255, 255, 255, 0.03);
         }
 
         .route-item {
@@ -183,10 +185,14 @@
         }
     </style>
 </head>
+
 <body>
     <div class="app-container" style="padding-bottom: 0;">
         <div class="map-bg">
-            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+            <iframe
+                src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe"
+                width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy"
+                referrerpolicy="no-referrer-when-downgrade"></iframe>
         </div>
         <div class="map-overlay"></div>
 
@@ -201,7 +207,8 @@
         <div class="bottom-sheet">
             <div class="sheet-handle"></div>
 
-            <div class="status-badge-custom" id="stateBadge" th:text="${viaje.estado == 'ACEPTADO' ? 'Conductor Asignado' : 'Viaje en Curso'}">
+            <div class="status-badge-custom" id="stateBadge"
+                th:text="${viaje.estado == 'ACEPTADO' ? 'Conductor Asignado' : 'Viaje en Curso'}">
                 Conductor Asignado
             </div>
 
@@ -210,7 +217,8 @@
                 <div class="client-details">
                     <div class="client-avatar" th:text="${#strings.substring(pasajeroUsuario.nombres,0,1)}">M</div>
                     <div class="client-text">
-                        <span class="client-name" th:text="${pasajeroUsuario.nombres + ' ' + pasajeroUsuario.apellidos}">María López</span>
+                        <span class="client-name"
+                            th:text="${pasajeroUsuario.nombres + ' ' + pasajeroUsuario.apellidos}">María López</span>
                         <span class="client-rating"><i class="fas fa-star"></i> 5.0 • Pasajero</span>
                     </div>
                 </div>
@@ -233,14 +241,16 @@
 
             <!-- Actions container -->
             <div class="btn-action-container">
-                <button th:if="${viaje.estado == 'ACEPTADO'}" id="btnStart" class="btn-action btn-start" onclick="updateState('EN_CURSO')">
+                <button th:if="${viaje.estado == 'ACEPTADO'}" id="btnStart" class="btn-action btn-start"
+                    onclick="updateState('EN_CURSO')">
                     <i class="fas fa-play"></i> Iniciar Viaje
                 </button>
-                
-                <button th:style="${viaje.estado == 'EN_CURSO'} ? '' : 'display:none;'" id="btnEnd" class="btn-action btn-end" onclick="updateState('COMPLETADO')">
+
+                <button th:style="${viaje.estado == 'EN_CURSO'} ? '' : 'display:none;'" id="btnEnd"
+                    class="btn-action btn-end" onclick="updateState('COMPLETADO')">
                     <i class="fas fa-flag-checkered"></i> Finalizar Viaje
                 </button>
-                
+
                 <button id="btnCancel" class="btn-action btn-cancel" onclick="cancelTrip()">
                     Cancelar Viaje
                 </button>
@@ -249,7 +259,7 @@
     </div>
 
     <script th:inline="javascript">
-        const viajeId = [[${viaje.idViaje}]];
+        const viajeId = [[${ viaje.idViaje }]];
 
         function updateState(newState) {
             const formData = new FormData();
@@ -260,22 +270,22 @@
                 method: 'POST',
                 body: formData
             })
-            .then(res => res.json())
-            .then(data => {
-                if (data.success) {
-                    if (newState === 'EN_CURSO') {
-                        document.getElementById('stateBadge').innerText = "Viaje en Curso";
-                        document.getElementById('btnStart').style.display = 'none';
-                        document.getElementById('btnEnd').style.display = 'flex';
-                    } else if (newState === 'COMPLETADO') {
-                        // Redirect to history/earnings
-                        window.location.href = '/conductor/dashboard';
+                .then(res => res.json())
+                .then(data => {
+                    if (data.success) {
+                        if (newState === 'EN_CURSO') {
+                            document.getElementById('stateBadge').innerText = "Viaje en Curso";
+                            document.getElementById('btnStart').style.display = 'none';
+                            document.getElementById('btnEnd').style.display = 'flex';
+                        } else if (newState === 'COMPLETADO') {
+                            // Redirect to history/earnings
+                            window.location.href = '/conductor/dashboard';
+                        }
+                    } else {
+                        alert("No se pudo actualizar el estado.");
                     }
-                } else {
-                    alert("No se pudo actualizar el estado.");
-                }
-            })
-            .catch(err => console.error("Error updating trip status: ", err));
+                })
+                .catch(err => console.error("Error updating trip status: ", err));
         }
 
         function cancelTrip() {
@@ -285,4 +295,5 @@
         }
     </script>
 </body>
+
 </html>
