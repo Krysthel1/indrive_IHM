@@ -29,9 +29,6 @@ public class PasajeroController {
     @Autowired
     private ConductorRepository conductorRepository;
 
-    @Autowired
-    private VehiculoRepository vehiculoRepository;
-
     private Usuario getUsuarioLogueado(HttpSession session) {
         return (Usuario) session.getAttribute("usuarioLogueado");
     }
@@ -148,13 +145,13 @@ public class PasajeroController {
         Optional<Viaje> viajeOpt = viajeRepository.findTopByPasajeroIdPasajeroAndEstadoInOrderByIdViajeDesc(
                 pasajero.getIdPasajero(), Arrays.asList("ACEPTADO", "EN_CURSO", "COMPLETADO"));
 
-        model.addAttribute("usuarioLogueado", usuario);
-        if (viajeOpt.isPresent()) {
-            model.addAttribute("viaje", viajeOpt.get());
-            model.addAttribute("sinViaje", false);
-        } else {
-            model.addAttribute("sinViaje", true);
+        if (viajeOpt.isEmpty()) {
+            return "redirect:/pasajero/dashboard";
         }
+
+        Viaje viaje = viajeOpt.get();
+        model.addAttribute("usuarioLogueado", usuario);
+        model.addAttribute("viaje", viaje);
         return "pasajero/pago";
     }
 
@@ -170,20 +167,7 @@ public class PasajeroController {
             Optional<Viaje> viajeOpt = viajeRepository.findTopByPasajeroIdPasajeroAndEstadoInOrderByIdViajeDesc(
                     pasajero.getIdPasajero(), Arrays.asList("COMPLETADO"));
             if (viajeOpt.isPresent()) {
-                Viaje viaje = viajeOpt.get();
-                model.addAttribute("viajeId", viaje.getIdViaje());
-                model.addAttribute("viaje", viaje);
-                
-                Conductor cond = viaje.getConductor();
-                if (cond != null) {
-                    model.addAttribute("conductor", cond);
-                    Vehiculo v = vehiculoRepository.findAll().stream()
-                            .filter(veh -> veh.getConductor() != null && veh.getConductor().getIdConductor().equals(cond.getIdConductor()))
-                            .findFirst().orElse(null);
-                    if (v != null) {
-                        model.addAttribute("vehiculo", v);
-                    }
-                }
+                model.addAttribute("viajeId", viajeOpt.get().getIdViaje());
             } else {
                 return "redirect:/pasajero/dashboard";
             }

@@ -3,117 +3,73 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
-    <title>Billetera - inDrive</title>
+    <title>Pagar Viaje - inDrive</title>
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/app.css}">
     <style>
-        /* ── Balance Card ── */
-        .balance-card {
-            background: var(--primary-gradient);
-            border-radius: 24px;
-            padding: 2rem 1.5rem;
-            text-align: center;
-            margin-bottom: 1.5rem;
-            box-shadow: 0 8px 30px rgba(230, 81, 0, 0.3);
-            animation: slideUpFade 0.4s cubic-bezier(0.16, 1, 0.3, 1);
-        }
-        .balance-label {
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.75);
-            letter-spacing: 0.05em;
-            text-transform: uppercase;
-            margin-bottom: 0.4rem;
-        }
-        .balance-amount {
-            font-size: 3rem;
-            font-weight: 800;
-            color: white;
-            letter-spacing: -2px;
-            line-height: 1;
-            margin-bottom: 0.5rem;
-        }
-        .balance-status {
-            font-size: 0.8rem;
-            color: rgba(255,255,255,0.65);
-        }
-
-        /* ── Section title ── */
-        .section-title {
-            font-size: 0.8rem;
-            font-weight: 600;
-            color: var(--text-muted);
-            text-transform: uppercase;
-            letter-spacing: 0.08em;
-            margin: 1.5rem 0 0.75rem 0;
-        }
-
-        /* ── Payment Box (con viaje) ── */
         .payment-box {
             background: var(--bg-surface);
-            border-radius: 20px;
-            padding: 1.5rem;
+            border-radius: 24px;
+            padding: 2rem 1.5rem;
             border: 1px solid var(--glass-border);
-            box-shadow: 0 8px 30px rgba(0,0,0,0.25);
+            text-align: center;
+            margin-top: 1.5rem;
+            box-shadow: 0 8px 30px rgba(0,0,0,0.3);
             animation: slideUpFade 0.5s cubic-bezier(0.16, 1, 0.3, 1);
-            margin-bottom: 1.5rem;
         }
-        .trip-amount-row {
-            display: flex;
-            align-items: center;
-            justify-content: space-between;
-            margin-bottom: 1.2rem;
-            padding-bottom: 1rem;
-            border-bottom: 1px solid var(--glass-border);
-        }
-        .trip-amount-label {
-            font-size: 0.85rem;
-            color: var(--text-muted);
-        }
-        .trip-amount-value {
-            font-size: 2rem;
+
+        .payment-amount {
+            font-size: 3rem;
             font-weight: 800;
             color: var(--success);
+            margin: 1.5rem 0;
             letter-spacing: -1px;
         }
 
-        /* ── Payment Methods ── */
         .payment-methods {
             display: flex;
             flex-direction: column;
-            gap: 10px;
-            margin-bottom: 1.2rem;
+            gap: 12px;
+            margin: 1.5rem 0 2rem 0;
+            text-align: left;
         }
+
         .method-option {
             display: flex;
             align-items: center;
             justify-content: space-between;
-            padding: 0.9rem 1.1rem;
+            padding: 1rem 1.2rem;
             background: rgba(255, 255, 255, 0.03);
             border: 1px solid var(--glass-border);
             border-radius: 14px;
             cursor: pointer;
             transition: all 0.2s;
         }
+
         .method-option.selected {
             border-color: var(--primary);
-            background: rgba(230, 81, 0, 0.07);
+            background: rgba(230, 81, 0, 0.05);
         }
+
         .method-details {
             display: flex;
             align-items: center;
             gap: 12px;
         }
+
         .method-details i {
-            font-size: 1.2rem;
+            font-size: 1.25rem;
             color: var(--primary);
-            width: 22px;
+            width: 24px;
             text-align: center;
         }
+
         .method-name {
             font-weight: 500;
-            font-size: 0.9rem;
+            font-size: 0.95rem;
         }
+
         .checkbox-custom {
             width: 20px;
             height: 20px;
@@ -122,12 +78,13 @@
             display: flex;
             align-items: center;
             justify-content: center;
-            flex-shrink: 0;
         }
+
         .method-option.selected .checkbox-custom {
             border-color: var(--primary);
             background: var(--primary);
         }
+
         .method-option.selected .checkbox-custom::after {
             content: "";
             width: 8px;
@@ -135,286 +92,63 @@
             background: white;
             border-radius: 50%;
         }
-
-        /* ── Empty state (sin viaje) ── */
-        .empty-banner {
-            background: var(--bg-surface);
-            border: 1px solid var(--glass-border);
-            border-radius: 18px;
-            padding: 1.4rem 1.2rem;
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            margin-bottom: 1.5rem;
-            animation: slideUpFade 0.45s ease-out;
-        }
-        .empty-banner-icon {
-            width: 46px;
-            height: 46px;
-            border-radius: 14px;
-            background: rgba(230, 81, 0, 0.1);
-            display: flex;
-            align-items: center;
-            justify-content: center;
-            flex-shrink: 0;
-        }
-        .empty-banner-icon i {
-            font-size: 1.4rem;
-            color: var(--primary);
-        }
-        .empty-banner-text .title {
-            font-weight: 600;
-            font-size: 0.95rem;
-        }
-        .empty-banner-text .sub {
-            font-size: 0.8rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* ── Stat row ── */
-        .stat-row {
-            display: grid;
-            grid-template-columns: 1fr 1fr;
-            gap: 10px;
-            margin-bottom: 1.5rem;
-        }
-        .stat-card {
-            background: var(--bg-surface);
-            border: 1px solid var(--glass-border);
-            border-radius: 16px;
-            padding: 1rem;
-            text-align: center;
-        }
-        .stat-card .num {
-            font-size: 1.3rem;
-            font-weight: 700;
-            color: var(--primary);
-        }
-        .stat-card .lbl {
-            font-size: 0.72rem;
-            color: var(--text-muted);
-            margin-top: 2px;
-        }
-
-        /* ── Saved methods (sin viaje) ── */
-        .saved-method {
-            display: flex;
-            align-items: center;
-            gap: 14px;
-            background: var(--bg-surface);
-            border: 1px solid var(--glass-border);
-            border-radius: 14px;
-            padding: 1rem 1.2rem;
-            margin-bottom: 10px;
-        }
-        .saved-method-icon {
-            font-size: 1.3rem;
-            color: var(--primary);
-            width: 22px;
-            text-align: center;
-        }
-        .saved-method-info .name {
-            font-weight: 500;
-            font-size: 0.9rem;
-        }
-        .saved-method-info .desc {
-            font-size: 0.75rem;
-            color: var(--text-muted);
-            margin-top: 1px;
-        }
-        .method-badge {
-            margin-left: auto;
-            background: rgba(76, 175, 80, 0.12);
-            color: var(--success);
-            font-size: 0.7rem;
-            font-weight: 600;
-            padding: 3px 10px;
-            border-radius: 20px;
-        }
     </style>
 </head>
 <body>
     <div class="app-container">
-
         <!-- App Bar -->
         <div class="app-bar">
             <div style="width: 40px;"></div>
-            <h1 class="app-bar-title">Billetera</h1>
+            <h1 class="app-bar-title">Pago de Viaje</h1>
             <div style="width: 40px;"></div>
         </div>
 
         <!-- Main Content -->
         <div class="app-content">
+            <div class="payment-box">
+                <i class="fas fa-check-circle" style="font-size: 4rem; color: var(--success);"></i>
+                <h2 class="mt-4" style="font-size: 1.5rem; font-weight: 600;">¡Has llegado a tu destino!</h2>
+                <p class="text-muted">Por favor, realiza el pago al conductor.</p>
 
-            <!-- ╔══════════════════════════════╗ -->
-            <!-- ║  CASO 1: HAY VIAJE PENDIENTE  ║ -->
-            <!-- ╚══════════════════════════════╝ -->
-            <div th:if="${!sinViaje}">
-
-                <!-- Balance del viaje -->
-                <div class="balance-card">
-                    <div class="balance-label">Total a pagar</div>
-                    <div class="balance-amount">
-                        S/ <span th:text="${viaje != null ? viaje.precioPropuesto : '0.00'}">0.00</span>
-                    </div>
-                    <div class="balance-status">
-                        <i class="fas fa-circle" style="font-size:0.5rem; margin-right:5px; color: rgba(255,255,255,0.8);"></i>
-                        Viaje activo — pendiente de pago
-                    </div>
+                <div class="payment-amount">
+                    S/ <span th:text="${viaje.precioPropuesto}">12.00</span>
                 </div>
 
-                <!-- Formulario de pago -->
-                <form th:if="${viaje != null}"
-                      th:action="@{/pago/guardar}" method="POST"
-                      id="paymentForm" class="payment-box">
-
-                    <input type="hidden" name="viajeId"
-                           th:value="${viaje.idViaje}">
-                    <input type="hidden" name="monto"
-                           th:value="${viaje.precioPropuesto}">
-                    <input type="hidden" name="metodo" id="metodoInput" value="Efectivo">
-
-                    <div class="trip-amount-row">
-                        <div>
-                            <div style="font-weight: 600; margin-bottom: 3px;">¡Has llegado a tu destino!</div>
-                            <div class="trip-amount-label">Confirma el método de pago al conductor.</div>
+                <div class="payment-methods">
+                    <div class="method-option selected" onclick="selectMethod(this)">
+                        <div class="method-details">
+                            <i class="fas fa-money-bill-wave"></i>
+                            <span class="method-name">Efectivo</span>
                         </div>
-                        <i class="fas fa-check-circle" style="font-size: 2rem; color: var(--success);"></i>
+                        <div class="checkbox-custom"></div>
                     </div>
-
-                    <p class="section-title">Método de pago</p>
-
-                    <div class="payment-methods">
-                        <div class="method-option selected" data-method="Efectivo" onclick="selectMethod(this)">
-                            <div class="method-details">
-                                <i class="fas fa-money-bill-wave"></i>
-                                <span class="method-name">Efectivo</span>
-                            </div>
-                            <div class="checkbox-custom"></div>
+                    <div class="method-option" onclick="selectMethod(this)">
+                        <div class="method-details">
+                            <i class="fas fa-mobile-alt"></i>
+                            <span class="method-name">Yape / Plin</span>
                         </div>
-                        <div class="method-option" data-method="Yape / Plin" onclick="selectMethod(this)">
-                            <div class="method-details">
-                                <i class="fas fa-mobile-alt"></i>
-                                <span class="method-name">Yape / Plin</span>
-                            </div>
-                            <div class="checkbox-custom"></div>
+                        <div class="checkbox-custom"></div>
+                    </div>
+                    <div class="method-option" onclick="selectMethod(this)">
+                        <div class="method-details">
+                            <i class="fas fa-credit-card"></i>
+                            <span class="method-name">Tarjeta de Crédito / Débito</span>
                         </div>
-                        <div class="method-option" data-method="Tarjeta de Crédito / Débito" onclick="selectMethod(this)">
-                            <div class="method-details">
-                                <i class="fas fa-credit-card"></i>
-                                <span class="method-name">Tarjeta de Crédito / Débito</span>
-                            </div>
-                            <div class="checkbox-custom"></div>
-                        </div>
-                    </div>
-
-                    <button type="submit" class="btn-primary"
-                            style="width: 100%; border: none; cursor: pointer;">
-                        <i class="fas fa-wallet"></i> Confirmar Pago
-                    </button>
-                </form>
-            </div>
-
-            <!-- ╔══════════════════════════════╗ -->
-            <!-- ║  CASO 2: SIN VIAJE ACTIVO     ║ -->
-            <!-- ╚══════════════════════════════╝ -->
-            <div th:if="${sinViaje}">
-
-                <!-- Balance vacío -->
-                <div class="balance-card">
-                    <div class="balance-label">Saldo disponible</div>
-                    <div class="balance-amount">S/ 0.00</div>
-                    <div class="balance-status">
-                        <i class="fas fa-circle" style="font-size:0.5rem; margin-right:5px;"></i>
-                        Sin movimientos recientes
+                        <div class="checkbox-custom"></div>
                     </div>
                 </div>
 
-                <!-- Estado sin pagos pendientes -->
-                <div class="empty-banner">
-                    <div class="empty-banner-icon">
-                        <i class="fas fa-receipt"></i>
-                    </div>
-                    <div class="empty-banner-text">
-                        <div class="title">No tienes pagos pendientes</div>
-                        <div class="sub">Tus pagos aparecerán aquí al finalizar un viaje.</div>
-                    </div>
-                </div>
-
-                <!-- Resumen de gastos -->
-                <p class="section-title">Resumen de Gastos</p>
-                <div class="stat-row">
-                    <div class="stat-card">
-                        <div class="num">S/ 0.00</div>
-                        <div class="lbl">Este mes</div>
-                    </div>
-                    <div class="stat-card">
-                        <div class="num">S/ 0.00</div>
-                        <div class="lbl">Total pagado</div>
-                    </div>
-                </div>
-
-                <!-- Métodos de pago registrados -->
-                <p class="section-title">Métodos de Pago</p>
-
-                <div class="saved-method">
-                    <i class="saved-method-icon fas fa-money-bill-wave"></i>
-                    <div class="saved-method-info">
-                        <div class="name">Efectivo</div>
-                        <div class="desc">Pago directo al conductor</div>
-                    </div>
-                    <span class="method-badge">Disponible</span>
-                </div>
-
-                <div class="saved-method">
-                    <i class="saved-method-icon fas fa-mobile-alt"></i>
-                    <div class="saved-method-info">
-                        <div class="name">Yape / Plin</div>
-                        <div class="desc">Transferencia digital</div>
-                    </div>
-                    <span class="method-badge">Disponible</span>
-                </div>
-
-                <div class="saved-method">
-                    <i class="saved-method-icon fas fa-credit-card"></i>
-                    <div class="saved-method-info">
-                        <div class="name">Tarjeta de Crédito / Débito</div>
-                        <div class="desc">Visa, Mastercard</div>
-                    </div>
-                    <span class="method-badge">Disponible</span>
-                </div>
-
+                <a href="/pasajero/calificacion" class="btn-primary">
+                    <i class="fas fa-wallet"></i> Confirmar Pago
+                </a>
             </div>
         </div>
-
-        <!-- Bottom Navigation -->
-        <nav class="bottom-nav">
-            <a href="/pasajero/dashboard" class="nav-item">
-                <i class="fas fa-home"></i>
-                <span>Inicio</span>
-            </a>
-            <a href="/pasajero/historial" class="nav-item">
-                <i class="fas fa-car"></i>
-                <span>Viajes</span>
-            </a>
-            <a href="/pasajero/pago" class="nav-item active">
-                <i class="fas fa-credit-card"></i>
-                <span>Billetera</span>
-            </a>
-            <a href="/pasajero/perfil" class="nav-item">
-                <i class="fas fa-user"></i>
-                <span>Perfil</span>
-            </a>
-        </nav>
     </div>
 
     <script>
         function selectMethod(el) {
             document.querySelectorAll('.method-option').forEach(opt => opt.classList.remove('selected'));
             el.classList.add('selected');
-            const input = document.getElementById('metodoInput');
-            if (input) input.value = el.getAttribute('data-method');
         }
     </script>
 </body>

@@ -104,7 +104,7 @@
         <!-- App Bar -->
         <div class="app-bar">
             <h1 class="app-bar-title">inDrive</h1>
-            <a href="/auth/logout" class="app-bar-btn" title="Cerrar Sesión">
+            <a href="/auth/login" class="app-bar-btn" title="Cerrar Sesión">
                 <i class="fas fa-sign-out-alt" style="color: var(--danger);"></i>
             </a>
         </div>
@@ -114,117 +114,9 @@
             <h2 class="mb-1" style="font-size: 1.5rem;">Hola, <span th:text="${usuarioLogueado.nombres}">Pasajero</span></h2>
             <p class="text-muted mb-3">¿A dónde vamos hoy?</p>
 
-            <!-- Leaflet JS API (Free, No API Key needed) -->
-            <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-            <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
-            <style>
-                .custom-user-marker {
-                    display: flex;
-                    flex-direction: column;
-                    align-items: center;
-                    position: absolute;
-                    top: -45px;
-                    left: -16px;
-                }
-                .custom-user-marker .icon-box {
-                    background: white;
-                    border-radius: 8px;
-                    box-shadow: 0 2px 5px rgba(0,0,0,0.3);
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    width: 32px;
-                    height: 32px;
-                }
-                .custom-user-marker .icon-box i {
-                    color: black;
-                    font-size: 18px;
-                }
-                .custom-user-marker .line {
-                    width: 2px;
-                    height: 15px;
-                    background: white;
-                }
-                .custom-user-marker .dot {
-                    width: 14px;
-                    height: 14px;
-                    background: #2196F3;
-                    border: 2px solid white;
-                    border-radius: 50%;
-                    box-shadow: 0 0 10px rgba(33, 150, 243, 0.8);
-                }
-                
-                .car-marker {
-                    background: white;
-                    border-radius: 50%;
-                    width: 24px;
-                    height: 24px;
-                    display: flex;
-                    align-items: center;
-                    justify-content: center;
-                    box-shadow: 0 2px 4px rgba(0,0,0,0.5);
-                    border: 2px solid #ddd;
-                }
-                .car-marker i {
-                    color: #555;
-                    font-size: 12px;
-                }
-            </style>
-            
-            <div style="position: relative;">
-                <div id="map" class="map-placeholder" style="overflow: hidden; position: relative; height: 280px; z-index: 1;"></div>
-                
-                <!-- Floating "De dónde" label to match photo -->
-                <div style="position: absolute; top: 15px; left: 50%; transform: translateX(-50%); z-index: 2; background: rgba(30,30,30,0.9); border-radius: 12px; padding: 6px 16px; display: flex; flex-direction: column; align-items: center; box-shadow: 0 4px 10px rgba(0,0,0,0.5);">
-                    <span style="font-size: 0.7rem; color: #aaa;">De dónde</span>
-                    <span style="font-weight: 600; font-size: 0.9rem; color: white;">Universidad Nacional de Piura <i class="fas fa-chevron-right" style="font-size: 0.7rem; margin-left: 5px;"></i></span>
-                </div>
+            <div class="map-placeholder" style="overflow: hidden; position: relative;">
+                <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
             </div>
-
-            <script>
-                function initMap() {
-                    const piura = [-5.180252, -80.629471];
-                    const map = L.map('map', {
-                        zoomControl: false,
-                        attributionControl: false
-                    }).setView(piura, 16);
-
-                    // CartoDB Dark Matter (Matches screenshot dark theme perfectly)
-                    L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                        maxZoom: 19
-                    }).addTo(map);
-                    
-                    // Custom User Marker (replicates screenshot exactly)
-                    const userIcon = L.divIcon({
-                        className: 'custom-user-marker-container',
-                        html: `
-                            <div class="custom-user-marker">
-                                <div class="icon-box"><i class="fas fa-person"></i></div>
-                                <div class="line"></div>
-                                <div class="dot"></div>
-                            </div>
-                        `,
-                        iconSize: [32, 60],
-                        iconAnchor: [16, 60]
-                    });
-
-                    L.marker(piura, {icon: userIcon}).addTo(map);
-
-                    // Add some fake nearby cars to make it look realistic like inDrive
-                    const carIcon = L.divIcon({
-                        className: 'car-marker-container',
-                        html: `<div class="car-marker"><i class="fas fa-car"></i></div>`,
-                        iconSize: [24, 24],
-                        iconAnchor: [12, 12]
-                    });
-
-                    L.marker([-5.181252, -80.631471], {icon: carIcon}).addTo(map);
-                    L.marker([-5.178252, -80.627471], {icon: carIcon}).addTo(map);
-                    L.marker([-5.179000, -80.630000], {icon: carIcon}).addTo(map);
-                }
-                
-                window.addEventListener('load', initMap);
-            </script>
 
             <a href="/pasajero/destino" class="btn-primary mb-4">
                 <i class="fas fa-search"></i> Ingresar Destino

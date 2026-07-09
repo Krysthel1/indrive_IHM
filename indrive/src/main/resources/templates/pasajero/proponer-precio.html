@@ -7,9 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/app.css}">
-    <!-- Leaflet JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         .map-bg {
             position: absolute;
@@ -143,8 +140,10 @@
 </head>
 <body>
     <div class="app-container" style="padding-bottom: 0;">
-        <div id="map" style="position: absolute; top:0; left:0; width:100%; height:100vh; z-index:0; opacity: 0.8;"></div>
-        <div class="map-overlay" style="pointer-events: none;"></div>
+        <div class="map-bg" style="opacity: 0.8; z-index: 0; overflow: hidden;">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-overlay"></div>
 
         <!-- App Bar -->
         <div class="app-bar">
@@ -159,13 +158,9 @@
             <div class="sheet-handle"></div>
             
             <div class="route-summary" style="margin-bottom: 1rem;">
-                <div class="route-summary-text" style="color: var(--text-main); font-size: 0.85rem; flex: 1;">
+                <div class="route-summary-text" style="color: var(--text-main); font-size: 0.85rem;">
                     <div style="margin-bottom: 4px;"><i class="fas fa-dot-circle" style="color: var(--info); width: 16px;"></i> <span th:text="${origen}">Origen</span></div>
                     <div><i class="fas fa-map-marker-alt" style="color: var(--primary); width: 16px;"></i> <span th:text="${destino}">Destino</span></div>
-                </div>
-                <div id="routeMeta" style="background: rgba(255,255,255,0.05); padding: 6px 12px; border-radius: 12px; border: 1px solid var(--glass-border); font-size: 0.8rem; text-align: right; min-width: 90px;">
-                    <div style="font-weight: 700; color: var(--primary);" id="metaDist">... km</div>
-                    <div style="font-size: 0.7rem; color: var(--text-muted);" id="metaTime">... min</div>
                 </div>
             </div>
 
@@ -174,8 +169,6 @@
             <form action="/viaje/guardar" method="post">
                 <input type="hidden" name="origen" th:value="${origen}">
                 <input type="hidden" name="destino" th:value="${destino}">
-                <input type="hidden" name="distancia" id="distanciaInput" value="0.0">
-                <input type="hidden" name="duracion" id="duracionInput" value="0">
 
                 <div class="price-input-wrapper" style="margin-bottom: 1.2rem;">
                     <span class="price-currency">S/</span>
@@ -196,96 +189,10 @@
         </div>
     </div>
 
-    <script th:inline="javascript">
+    <script>
         function setPrice(val) {
             document.getElementById('priceInput').value = val.toFixed(2);
         }
-
-        // Leaflet logic
-        let map;
-
-        function getCoordinates(address) {
-            return fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(address + ', Piura')}&limit=1`)
-                .then(res => res.json())
-                .then(data => {
-                    if (data && data.length > 0) {
-                        return [parseFloat(data[0].lat), parseFloat(data[0].lon)];
-                    }
-                    return [-5.180252, -80.629471]; // Fallback to Piura
-                });
-        }
-
-        async function initMap() {
-            const piura = [-5.180252, -80.629471];
-            map = L.map('map', { zoomControl: false, attributionControl: false }).setView(piura, 13);
-
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                maxZoom: 19
-            }).addTo(map);
-
-            const origenText = [[${origen}]];
-            const destinoText = [[${destino}]];
-
-            const originCoords = await getCoordinates(origenText);
-            const destCoords = await getCoordinates(destinoText);
-
-            // Origin Marker Custom UI
-            const originIcon = L.divIcon({
-                className: 'custom-origin',
-                html: `<div style="width:16px;height:16px;background:#0A84FF;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(10,132,255,0.8);"></div>`,
-                iconSize: [22, 22],
-                iconAnchor: [11, 11]
-            });
-            L.marker(originCoords, {icon: originIcon}).addTo(map);
-
-            // Destination Marker Custom UI
-            const destIcon = L.divIcon({
-                className: 'custom-dest',
-                html: `<div style="width:16px;height:16px;background:#FF6D00;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(255,109,0,0.8);"></div>`,
-                iconSize: [22, 22],
-                iconAnchor: [11, 11]
-            });
-            L.marker(destCoords, {icon: destIcon}).addTo(map);
-
-            // Fit bounds
-            const bounds = L.latLngBounds(originCoords, destCoords);
-            map.fitBounds(bounds, { padding: [50, 50] });
-
-            // OSRM Routing
-            fetch(`https://router.project-osrm.org/route/v1/driving/${originCoords[1]},${originCoords[0]};${destCoords[1]},${destCoords[0]}?overview=full&geometries=geojson`)
-                .then(res => res.json())
-                .then(data => {
-                    if(data.routes && data.routes.length > 0) {
-                        const route = data.routes[0];
-                        const distanceKm = (route.distance / 1000).toFixed(1);
-                        const durationMin = Math.round(route.duration / 60);
-
-                        document.getElementById('metaDist').innerText = distanceKm + ' km';
-                        document.getElementById('metaTime').innerText = durationMin + ' min';
-
-                        document.getElementById('distanciaInput').value = distanceKm;
-                        document.getElementById('duracionInput').value = durationMin;
-
-                        // Draw Route
-                        const routeCoords = route.geometry.coordinates.map(c => [c[1], c[0]]);
-                        L.polyline(routeCoords, {
-                            color: '#FF6D00',
-                            weight: 5,
-                            opacity: 0.8
-                        }).addTo(map);
-                    } else {
-                        document.getElementById('metaDist').innerText = '-- km';
-                        document.getElementById('metaTime').innerText = '-- min';
-                    }
-                })
-                .catch(err => {
-                    console.error("OSRM Routing failed", err);
-                    document.getElementById('metaDist').innerText = '-- km';
-                    document.getElementById('metaTime').innerText = '-- min';
-                });
-        }
-
-        window.addEventListener('load', initMap);
     </script>
 </body>
 </html>

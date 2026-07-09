@@ -97,18 +97,6 @@
             font-size: 0.9rem;
         }
         
-        .alert-danger {
-            background: rgba(255, 82, 82, 0.1);
-            border: 1px solid var(--danger);
-            color: var(--danger);
-            padding: 1rem;
-            border-radius: 12px;
-            margin-bottom: 1.5rem;
-            font-size: 0.9rem;
-            text-align: center;
-            animation: slideUpFade 0.4s ease-out;
-        }
-        
         /* Hide original select */
         #rol { display: none; }
     </style>
@@ -128,8 +116,6 @@
                 <h1>inDrive</h1>
                 <p>Únete a nuestra comunidad</p>
             </div>
-
-            <div class="alert-danger" th:if="${error}" th:text="${error}"></div>
 
             <form th:action="@{/auth/registro}" method="post">
                 

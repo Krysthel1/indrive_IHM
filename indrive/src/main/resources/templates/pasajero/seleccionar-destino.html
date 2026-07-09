@@ -7,9 +7,6 @@
     <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
     <link rel="stylesheet" th:href="@{/css/app.css}">
-    <!-- Leaflet JS -->
-    <link rel="stylesheet" href="https://unpkg.com/leaflet@1.9.4/dist/leaflet.css" />
-    <script src="https://unpkg.com/leaflet@1.9.4/dist/leaflet.js"></script>
     <style>
         .map-bg {
             position: absolute;
@@ -119,8 +116,10 @@
 </head>
 <body>
     <div class="app-container" style="padding-bottom: 0;">
-        <div id="map" style="position: absolute; top:0; left:0; width:100%; height:100vh; z-index:0; opacity: 0.8;"></div>
-        <div class="map-overlay" style="pointer-events: none;"></div>
+        <div class="map-bg" style="opacity: 0.8; z-index: 0; overflow: hidden;">
+            <iframe src="https://www.google.com/maps/embed?pb=!1m18!1m12!1m3!1d3972.1963283296216!2d-80.629471!3d-5.180252!2m3!1f0!2f0!3f0!3m2!1i1024!2i768!4f13.1!3m3!1m2!1s0x904a107ef4f9547d%3A0x9d4e5f72cfb0132b!2sUniversidad%20Nacional%20de%20Piura!5e0!3m2!1ses-419!2spe!4v1700000000000!5m2!1ses-419!2spe" width="100%" height="100%" style="border:0;" allowfullscreen="" loading="lazy" referrerpolicy="no-referrer-when-downgrade"></iframe>
+        </div>
+        <div class="map-overlay"></div>
 
         <!-- App Bar -->
         <div class="app-bar">
@@ -165,103 +164,5 @@
             </form>
         </div>
     </div>
-    <script>
-        let map;
-        let destMarker;
-        let debounceTimer;
-
-        function initMap() {
-            const piura = [-5.180252, -80.629471]; // UNP
-            
-            map = L.map('map', {
-                zoomControl: false,
-                attributionControl: false
-            }).setView(piura, 14);
-
-            L.tileLayer('https://{s}.basemaps.cartocdn.com/rastertiles/voyager/{z}/{x}/{y}{r}.png', {
-                maxZoom: 19
-            }).addTo(map);
-
-            // Origin Marker Custom UI
-            const originIcon = L.divIcon({
-                className: 'custom-origin',
-                html: `<div style="width:16px;height:16px;background:#0A84FF;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(10,132,255,0.8);"></div>`,
-                iconSize: [22, 22],
-                iconAnchor: [11, 11]
-            });
-            L.marker(piura, {icon: originIcon}).addTo(map);
-
-            // Destination Marker Custom UI
-            const destIcon = L.divIcon({
-                className: 'custom-dest',
-                html: `<div style="width:16px;height:16px;background:#FF6D00;border-radius:50%;border:3px solid white;box-shadow:0 0 10px rgba(255,109,0,0.8);"></div>`,
-                iconSize: [22, 22],
-                iconAnchor: [11, 11]
-            });
-
-            // Map click listener for reverse geocoding
-            map.on('click', (e) => {
-                const coords = e.latlng;
-                
-                if (!destMarker) {
-                    destMarker = L.marker(coords, {icon: destIcon}).addTo(map);
-                } else {
-                    destMarker.setLatLng(coords);
-                }
-                
-                const destInput = document.getElementById('destino');
-                destInput.value = 'Buscando dirección...';
-                
-                // Reverse geocoding with Nominatim
-                fetch(`https://nominatim.openstreetmap.org/reverse?format=json&lat=${coords.lat}&lon=${coords.lng}&zoom=18&addressdetails=1`)
-                    .then(res => res.json())
-                    .then(data => {
-                        if (data && data.display_name) {
-                            let address = data.display_name.split(',')[0];
-                            if(data.address && data.address.road) {
-                                address = data.address.road;
-                                if(data.address.house_number) address += " " + data.address.house_number;
-                            }
-                            destInput.value = address;
-                        } else {
-                            destInput.value = "Ubicación seleccionada";
-                        }
-                    })
-                    .catch((err) => {
-                        console.error("Geocoder failed due to: " + err);
-                        destInput.value = coords.lat.toFixed(5) + ", " + coords.lng.toFixed(5);
-                    });
-            });
-            
-            // Forward Geocoding on Input (Nominatim)
-            const input = document.getElementById('destino');
-            input.addEventListener('input', function() {
-                clearTimeout(debounceTimer);
-                const query = this.value;
-                if(query.length < 4) return;
-                
-                debounceTimer = setTimeout(() => {
-                    fetch(`https://nominatim.openstreetmap.org/search?format=json&q=${encodeURIComponent(query + ', Piura')}&limit=1`)
-                        .then(res => res.json())
-                        .then(data => {
-                            if (data && data.length > 0) {
-                                const lat = parseFloat(data[0].lat);
-                                const lon = parseFloat(data[0].lon);
-                                const coords = [lat, lon];
-                                
-                                map.setView(coords, 16);
-                                if (!destMarker) {
-                                    destMarker = L.marker(coords, {icon: destIcon}).addTo(map);
-                                } else {
-                                    destMarker.setLatLng(coords);
-                                }
-                            }
-                        });
-                }, 1000);
-            });
-        }
-
-        window.addEventListener('load', initMap);
-    </script>
 </body>
 </html>

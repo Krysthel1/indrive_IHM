@@ -72,45 +72,50 @@ public class AuthController {
     @PostMapping("/registro")
     public String registrar(
             @ModelAttribute Usuario usuario,
-            @RequestParam(required = false) String licencia,
-            @RequestParam(required = false) String marca,
-            @RequestParam(required = false) String modelo,
-            @RequestParam(required = false) String placa,
-            @RequestParam(required = false) String color,
-            Model model) {
+            @RequestParam(required = false)
+            String licencia,
+            @RequestParam(required = false)
+            String marca,
+            @RequestParam(required = false)
+            String modelo,
+            @RequestParam(required = false)
+            String placa,
+            @RequestParam(required = false)
+            String color) {
 
-        if (usuario.getCorreo() != null && usuarioService.buscarPorCorreo(usuario.getCorreo()).isPresent()) {
-            model.addAttribute("error", "El correo electrónico ya está registrado.");
-            return "auth/registro";
+        Usuario nuevoUsuario =
+                usuarioService.guardar(usuario);
+
+        if (usuario.getRol().equals("PASAJERO")) {
+
+            Pasajero pasajero = new Pasajero();
+            pasajero.setUsuario(nuevoUsuario);
+
+            pasajeroService.guardar(pasajero);
         }
 
-        try {
-            Usuario nuevoUsuario = usuarioService.guardar(usuario);
+        if (usuario.getRol().equals("CONDUCTOR")) {
 
-            if (usuario.getRol().equals("PASAJERO")) {
-                Pasajero pasajero = new Pasajero();
-                pasajero.setUsuario(nuevoUsuario);
-                pasajeroService.guardar(pasajero);
-            }
+            Conductor conductor =
+                    new Conductor();
 
-            if (usuario.getRol().equals("CONDUCTOR")) {
-                Conductor conductor = new Conductor();
-                conductor.setUsuario(nuevoUsuario);
-                conductor.setLicencia(licencia);
-                conductor.setDisponibilidad(true);
-                conductor = conductorService.guardar(conductor);
+            conductor.setUsuario(nuevoUsuario);
+            conductor.setLicencia(licencia);
+            conductor.setDisponibilidad(true);
 
-                Vehiculo vehiculo = new Vehiculo();
-                vehiculo.setConductor(conductor);
-                vehiculo.setMarca(marca);
-                vehiculo.setModelo(modelo);
-                vehiculo.setPlaca(placa);
-                vehiculo.setColor(color);
-                vehiculoService.guardar(vehiculo);
-            }
-        } catch (Exception e) {
-            model.addAttribute("error", "Error al guardar el registro: " + e.getMessage());
-            return "auth/registro";
+            conductor =
+                    conductorService.guardar(conductor);
+
+            Vehiculo vehiculo =
+                    new Vehiculo();
+
+            vehiculo.setConductor(conductor);
+            vehiculo.setMarca(marca);
+            vehiculo.setModelo(modelo);
+            vehiculo.setPlaca(placa);
+            vehiculo.setColor(color);
+
+            vehiculoService.guardar(vehiculo);
         }
 
         return "redirect:/auth/login";

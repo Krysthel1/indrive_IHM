@@ -161,7 +161,7 @@ public class ViajeController {
             Pasajero pasajero = pasajeroRepository.findByUsuarioIdUsuario(usuario.getIdUsuario()).orElse(null);
             if (pasajero != null) {
                 Optional<Viaje> viajeOpt = viajeRepository.findTopByPasajeroIdPasajeroAndEstadoInOrderByIdViajeDesc(
-                        pasajero.getIdPasajero(), Arrays.asList("PENDIENTE", "ACEPTADO", "EN_CURSO", "COMPLETADO", "LLEGO", "ESPERANDO_PASAJERO"));
+                        pasajero.getIdPasajero(), Arrays.asList("PENDIENTE", "ACEPTADO", "EN_CURSO", "COMPLETADO"));
                 if (viajeOpt.isPresent()) {
                     res.put("estado", viajeOpt.get().getEstado());
                     res.put("viajeId", viajeOpt.get().getIdViaje());

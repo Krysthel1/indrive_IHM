@@ -275,22 +275,9 @@
             }, 400);
         }
 
-        function checkActiveTrip() {
-            fetch('/viaje/api/estado')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.estado === 'ACEPTADO' || data.estado === 'EN_CURSO') {
-                        window.location.href = '/conductor/viaje';
-                    }
-                })
-                .catch(err => console.error("Error checking active trip: ", err));
-        }
-
         // Poll every 3 seconds
         setInterval(fetchRequests, 3000);
-        setInterval(checkActiveTrip, 3000);
         fetchRequests();
-        checkActiveTrip();
     </script>
 </body>
 </html>

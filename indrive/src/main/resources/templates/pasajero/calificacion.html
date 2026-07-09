@@ -98,18 +98,9 @@
                 <input type="hidden" name="viajeId" th:value="${viajeId}">
                 <input type="hidden" name="puntuacion" id="puntuacionInput" value="0">
 
-                <!-- Conductor Profile Card -->
-                <div class="driver-profile-card" th:if="${conductor != null}" style="display: flex; flex-direction: column; align-items: center; margin-bottom: 1.5rem; background: rgba(255,255,255,0.02); border: 1px solid var(--glass-border); padding: 1.5rem; border-radius: 20px;">
-                    <div class="driver-avatar" style="width: 70px; height: 70px; border-radius: 50%; background: linear-gradient(135deg, var(--primary) 0%, #ff8f00 100%); display: flex; align-items: center; justify-content: center; font-weight: 700; color: white; font-size: 1.8rem; margin-bottom: 0.8rem; box-shadow: 0 4px 15px rgba(255, 109, 0, 0.2);" th:text="${#strings.substring(conductor.usuario.nombres,0,1)}">C</div>
-                    <h3 style="font-size: 1.15rem; font-weight: 600; margin-bottom: 4px;" th:text="${conductor.usuario.nombres + ' ' + conductor.usuario.apellidos}">Carlos Mendoza</h3>
-                    <div style="font-size: 0.8rem; color: var(--warning); display: flex; align-items: center; gap: 4px; margin-bottom: 8px;">
-                        <i class="fas fa-star"></i> 4.9 • Conductor verificado
-                    </div>
-                    <div style="font-size: 0.8rem; color: var(--text-muted); background: rgba(255,255,255,0.05); padding: 4px 12px; border-radius: 12px; border: 1px solid var(--glass-border);" th:if="${vehiculo != null}" th:text="${vehiculo.marca + ' ' + vehiculo.modelo + ' • ' + vehiculo.color + ' (' + vehiculo.placa + ')'}">Toyota Corolla • Blanco (ABC-123)</div>
-                </div>
-
-                <h2 class="mt-4" style="font-size: 1.3rem; font-weight: 600; margin-bottom: 8px;">¿Cómo estuvo tu viaje?</h2>
-                <p class="text-muted" style="font-size:0.85rem; margin-bottom: 1.5rem;">Califica a tu conductor para mantener segura la comunidad.</p>
+                <i class="fas fa-heart" style="font-size: 3.5rem; color: var(--primary);"></i>
+                <h2 class="mt-4" style="font-size: 1.4rem; font-weight: 600;">¿Cómo estuvo tu viaje?</h2>
+                <p class="text-muted" style="font-size:0.85rem;">Califica tu experiencia para ayudarnos a mejorar.</p>
 
                 <!-- Stars Component -->
                 <div class="star-rating" id="starContainer">

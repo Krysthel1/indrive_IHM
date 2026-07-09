@@ -142,7 +142,7 @@
         <!-- App Bar -->
         <div class="app-bar">
             <h1 class="app-bar-title">inDrive Conductor</h1>
-            <a href="/auth/logout" class="app-bar-btn" title="Cerrar Sesión">
+            <a href="/auth/login" class="app-bar-btn" title="Cerrar Sesión">
                 <i class="fas fa-sign-out-alt" style="color: var(--danger);"></i>
             </a>
         </div>
@@ -234,19 +234,6 @@
             })
             .catch(err => console.error("Error toggling availability: ", err));
         }
-
-        function checkActiveTrip() {
-            fetch('/viaje/api/estado')
-                .then(res => res.json())
-                .then(data => {
-                    if (data.estado === 'ACEPTADO' || data.estado === 'EN_CURSO') {
-                        window.location.href = '/conductor/viaje';
-                    }
-                })
-                .catch(err => console.error("Error checking active trip: ", err));
-        }
-        setInterval(checkActiveTrip, 3000);
-        checkActiveTrip();
     </script>
 </body>
 </html>

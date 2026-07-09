@@ -1,0 +1,489 @@
+<!DOCTYPE html>
+<html xmlns:th="http://www.thymeleaf.org">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0, maximum-scale=1.0, user-scalable=no">
+    <title>Billetera - inDrive</title>
+    <link href="https://fonts.googleapis.com/css2?family=Poppins:wght@300;400;500;600;700&display=swap"
+        rel="stylesheet">
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.4.0/css/all.min.css">
+    <link rel="stylesheet" th:href="@{/css/app.css}">
+    <style>
+        .billetera-header {
+            margin-bottom: 1.5rem;
+        }
+
+        .billetera-title-container {
+            display: flex;
+            align-items: center;
+            gap: 8px;
+            margin-bottom: 0.25rem;
+        }
+
+        .billetera-title {
+            font-size: 1.8rem;
+            font-weight: 800;
+            color: #1A1A1A;
+            margin: 0;
+        }
+
+        .billetera-subtitle {
+            font-size: 0.95rem;
+            color: #7A8B9B;
+            margin: 0;
+        }
+
+        /* Orange Gradient Balance Card */
+        .balance-card {
+            background: linear-gradient(135deg, #FF6000 0%, #FF3D00 100%);
+            border-radius: 24px;
+            padding: 1.75rem;
+            color: white;
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            box-shadow: 0 12px 30px rgba(255, 85, 0, 0.25);
+            margin-bottom: 1.5rem;
+            position: relative;
+            overflow: hidden;
+        }
+
+        .balance-info {
+            display: flex;
+            flex-direction: column;
+            gap: 4px;
+            z-index: 2;
+        }
+
+        .balance-label {
+            font-size: 0.9rem;
+            font-weight: 500;
+            opacity: 0.9;
+        }
+
+        .balance-amount {
+            font-size: 2.2rem;
+            font-weight: 800;
+            letter-spacing: -0.5px;
+            margin: 4px 0;
+        }
+
+        .balance-desc {
+            font-size: 0.75rem;
+            opacity: 0.85;
+            font-weight: 400;
+        }
+
+        .balance-card-icon-container {
+            width: 56px;
+            height: 56px;
+            border-radius: 50%;
+            background: rgba(255, 255, 255, 0.25);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            backdrop-filter: blur(10px);
+            z-index: 2;
+        }
+
+        .balance-card-icon-container i {
+            font-size: 1.5rem;
+            color: white;
+        }
+
+        /* Expense Summary Card */
+        .summary-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .summary-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1A1A1A;
+        }
+
+        .summary-select-wrapper {
+            position: relative;
+        }
+
+        .summary-select {
+            background: #FFFFFF;
+            border: 1px solid #EEF2F6;
+            padding: 6px 32px 6px 14px;
+            border-radius: 12px;
+            font-size: 0.8rem;
+            font-weight: 600;
+            color: #4C5E70;
+            appearance: none;
+            cursor: pointer;
+            box-shadow: 0 2px 8px rgba(0,0,0,0.02);
+        }
+
+        .summary-select-wrapper i {
+            position: absolute;
+            right: 12px;
+            top: 50%;
+            transform: translateY(-50%);
+            font-size: 0.75rem;
+            color: #8C9BA5;
+            pointer-events: none;
+        }
+
+        .summary-card {
+            background: #FFFFFF;
+            border: 1px solid #EEF2F6;
+            border-radius: 24px;
+            padding: 1.25rem;
+            display: grid;
+            grid-template-columns: 1.2fr 1fr;
+            gap: 1rem;
+            box-shadow: 0 8px 24px rgba(0,0,0,0.02);
+            margin-bottom: 1.5rem;
+        }
+
+        .summary-col {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+        }
+
+        .summary-col:first-child {
+            border-right: 1px solid #F0F4F8;
+            padding-right: 8px;
+        }
+
+        .summary-icon-box {
+            width: 44px;
+            height: 44px;
+            border-radius: 50%;
+            background: #FFF0E6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .summary-icon-box i {
+            font-size: 1.1rem;
+        }
+
+        .summary-info {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+        }
+
+        .summary-info-label {
+            font-size: 0.75rem;
+            color: #8C9BA5;
+            font-weight: 500;
+        }
+
+        .summary-info-value {
+            font-size: 1.15rem;
+            font-weight: 700;
+            color: var(--primary);
+        }
+
+        /* Recent Expenses Section */
+        .section-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            margin-bottom: 0.75rem;
+        }
+
+        .section-title {
+            font-size: 1rem;
+            font-weight: 700;
+            color: #1A1A1A;
+        }
+
+        .section-link {
+            font-size: 0.85rem;
+            font-weight: 600;
+            color: var(--primary);
+            text-decoration: none;
+            transition: opacity 0.2s;
+        }
+
+        .section-link:active {
+            opacity: 0.8;
+        }
+
+        .expense-list {
+            display: flex;
+            flex-direction: column;
+            gap: 0.75rem;
+            margin-bottom: 1.5rem;
+        }
+
+        .expense-item {
+            background: #FFFFFF;
+            border: 1px solid #EEF2F6;
+            border-radius: 20px;
+            padding: 1rem 1.25rem;
+            display: flex;
+            align-items: center;
+            justify-content: space-between;
+            box-shadow: 0 4px 15px rgba(0,0,0,0.01);
+            text-decoration: none;
+            color: inherit;
+            transition: transform 0.2s;
+        }
+
+        .expense-item:active {
+            transform: scale(0.98);
+        }
+
+        .expense-left {
+            display: flex;
+            align-items: center;
+            gap: 12px;
+            min-width: 0;
+        }
+
+        .expense-icon-box {
+            width: 42px;
+            height: 42px;
+            border-radius: 50%;
+            background: #FFF0E6;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            color: var(--primary);
+            flex-shrink: 0;
+        }
+
+        .expense-icon-box i {
+            font-size: 1rem;
+        }
+
+        .expense-details {
+            display: flex;
+            flex-direction: column;
+            gap: 2px;
+            min-width: 0;
+        }
+
+        .expense-name {
+            font-weight: 700;
+            font-size: 0.9rem;
+            color: #1A1A1A;
+        }
+
+        .expense-meta {
+            font-size: 0.75rem;
+            color: #8C9BA5;
+            white-space: nowrap;
+            overflow: hidden;
+            text-overflow: ellipsis;
+        }
+
+        .expense-right {
+            display: flex;
+            align-items: center;
+            gap: 10px;
+            flex-shrink: 0;
+        }
+
+        .expense-amount {
+            font-weight: 700;
+            font-size: 0.95rem;
+            color: #1A1A1A;
+        }
+
+        .expense-arrow {
+            color: #C4CCD4;
+            font-size: 0.8rem;
+        }
+
+        .empty-state {
+            background: #FFFFFF;
+            border: 1px dashed #C4CCD4;
+            border-radius: 20px;
+            padding: 2rem;
+            text-align: center;
+            color: #8C9BA5;
+            font-size: 0.9rem;
+        }
+
+        /* Note Card */
+        .note-card {
+            background: #FFF5F0;
+            border: 1px solid #FFE5D9;
+            border-radius: 20px;
+            padding: 1.25rem;
+            display: flex;
+            gap: 12px;
+            align-items: flex-start;
+            margin-bottom: 2rem;
+        }
+
+        .note-icon {
+            width: 24px;
+            height: 24px;
+            border-radius: 50%;
+            background: #FFE5D9;
+            color: var(--primary);
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-size: 0.85rem;
+            flex-shrink: 0;
+            margin-top: 2px;
+        }
+
+        .note-text {
+            font-size: 0.8rem;
+            color: #5C6A75;
+            line-height: 1.4;
+        }
+
+        .note-text strong {
+            color: #1A1A1A;
+            display: block;
+            margin-bottom: 2px;
+        }
+    </style>
+</head>
+
+<body>
+    <div class="app-container">
+        <!-- App Bar -->
+        <div class="app-bar">
+            <h1 class="app-bar-title" style="font-size: 1.45rem; font-weight: 800;">
+                <span class="brand-in">in</span><span class="brand-drive">Drive</span>
+            </h1>
+            <a href="/auth/login" class="app-bar-btn logout-btn-custom" title="Cerrar Sesión">
+                <i class="fas fa-sign-out-alt"></i>
+            </a>
+        </div>
+
+        <!-- Main Content -->
+        <div class="app-content animate-slide-up">
+            <!-- Header Billetera -->
+            <div class="billetera-header">
+                <div class="billetera-title-container">
+                    <h2 class="billetera-title">Mi Billetera</h2>
+                    <span style="font-size: 1.5rem;">💳</span>
+                </div>
+                <p class="billetera-subtitle">Resumen de tus gastos</p>
+            </div>
+
+            <!-- Balance Card -->
+            <div class="balance-card">
+                <div class="balance-info">
+                    <span class="balance-label">Balance total</span>
+                    <span class="balance-amount" th:text="${'S/ ' + #numbers.formatDecimal(balanceTotal, 1, 2)}">S/ 0.00</span>
+                    <span class="balance-desc">Total gastado</span>
+                </div>
+                <div class="balance-card-icon-container">
+                    <i class="fas fa-wallet"></i>
+                </div>
+            </div>
+
+            <!-- Expense Summary Header -->
+            <div class="summary-header">
+                <span class="summary-title">Resumen de gastos</span>
+                <div class="summary-select-wrapper">
+                    <select class="summary-select">
+                        <option>Este mes</option>
+                    </select>
+                    <i class="fas fa-chevron-down"></i>
+                </div>
+            </div>
+
+            <!-- Expense Summary Card -->
+            <div class="summary-card">
+                <div class="summary-col">
+                    <div class="summary-icon-box">
+                        <i class="fas fa-chart-line"></i>
+                    </div>
+                    <div class="summary-info">
+                        <span class="summary-info-label">Gasto este mes</span>
+                        <span class="summary-info-value" th:text="${'S/ ' + #numbers.formatDecimal(gastoMes, 1, 2)}">S/ 0.00</span>
+                    </div>
+                </div>
+                <div class="summary-col">
+                    <div class="summary-info" style="padding-left: 8px;">
+                        <span class="summary-info-label">Viajes realizados</span>
+                        <span class="summary-info-value" style="font-size: 1.35rem;" th:text="${viajesRealizados}">0</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- Recent Expenses Header -->
+            <div class="section-header">
+                <span class="section-title">Últimos gastos</span>
+                <a href="/pasajero/historial" class="section-link">Ver todos</a>
+            </div>
+
+            <!-- Expenses List -->
+            <div class="expense-list">
+                <!-- Loop over recent payments -->
+                <div th:each="pago : ${ultimosPagos}">
+                    <a th:href="@{/pasajero/historial}" class="expense-item">
+                        <div class="expense-left">
+                            <div class="expense-icon-box">
+                                <i class="fas fa-car"></i>
+                            </div>
+                            <div class="expense-details">
+                                <span class="expense-name" th:text="${'Viaje de ' + pago.viaje.origen + ' a ' + pago.viaje.destino}">Viaje</span>
+                                <span class="expense-meta" th:text="${#temporals.format(pago.viaje.fecha, 'dd MMM. yyyy • hh:mm a')}">01 may. 2026 • 12:00 p.m.</span>
+                            </div>
+                        </div>
+                        <div class="expense-right">
+                            <span class="expense-amount" th:text="${'S/ ' + #numbers.formatDecimal(pago.monto, 1, 2)}">S/ 0.00</span>
+                            <i class="fas fa-chevron-right expense-arrow"></i>
+                        </div>
+                    </a>
+                </div>
+                
+                <!-- Empty state if no payments -->
+                <div class="empty-state" th:if="${#lists.isEmpty(ultimosPagos)}">
+                    <i class="fas fa-receipt" style="font-size: 2rem; margin-bottom: 8px; display: block; color: #C4CCD4;"></i>
+                    Aún no tienes gastos registrados.
+                </div>
+            </div>
+
+            <!-- Note Card -->
+            <div class="note-card">
+                <div class="note-icon">
+                    <i class="fas fa-shield-alt"></i>
+                </div>
+                <div class="note-text">
+                    <strong>Este es solo un resumen de tus gastos.</strong>
+                    Los pagos se reflejan al finalizar cada viaje.
+                </div>
+            </div>
+        </div>
+
+        <!-- Bottom Navigation -->
+        <nav class="bottom-nav">
+            <a href="/pasajero/dashboard" class="nav-item">
+                <i class="fas fa-home"></i>
+                <span>Inicio</span>
+            </a>
+            <a href="/pasajero/historial" class="nav-item">
+                <i class="fas fa-car"></i>
+                <span>Viajes</span>
+            </a>
+            <a href="/pago/billetera" class="nav-item active">
+                <i class="fas fa-credit-card"></i>
+                <span>Billetera</span>
+            </a>
+            <a href="/pasajero/perfil" class="nav-item">
+                <i class="fas fa-user"></i>
+                <span>Perfil</span>
+            </a>
+        </nav>
+    </div>
+</body>
+
+</html>
